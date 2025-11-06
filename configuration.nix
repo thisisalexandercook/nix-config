@@ -33,6 +33,7 @@
       home.packages = [
         pkgs.rocq-core
         pkgs.jdk
+        pkgs.xournalpp
       ];
 
     };
