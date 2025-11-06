@@ -20,10 +20,12 @@
       programs.bash.enable = true;
       programs.git = {
         enable = true;
-        userName = "Alex Cook";
-        userEmail = "a5cook@uwaterloo.ca";
 
-        extraConfig = {
+        settings = {
+          user = {
+            name = "Alex Cook";
+            email = "a5cook@uwaterloo.ca";
+          };
           init.defaultBranch = "main";
         };
       };
@@ -71,8 +73,8 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
