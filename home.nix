@@ -19,5 +19,6 @@
     pkgs.rocq-core
     pkgs.jdk
     pkgs.xournalpp
+    pkgs.python3
   ];
 }
