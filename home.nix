@@ -1,5 +1,10 @@
 # ./home.nix
 { pkgs, ... }: {
+
+  imports = [
+    ./emacs.nix
+  ];
+
   home.stateVersion = "25.05";
 
   programs.bash.enable = true;
