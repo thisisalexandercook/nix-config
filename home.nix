@@ -7,7 +7,14 @@
 
   home.stateVersion = "25.05";
 
-  programs.bash.enable = true;
+  programs.bash = {
+    enable = true;
+
+    sessionVariables = {
+      EDITOR = "emacs";
+    };
+
+  };
   programs.git = {
     enable = true;
 
