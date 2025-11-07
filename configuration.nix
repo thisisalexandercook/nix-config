@@ -127,6 +127,17 @@
     sops
   ];
 
+  sops = {
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    age.keyFile = "/home/alex/.config/sops/age/keys.txt";
+    defaultSopsFile = ./secrets/secrets.yaml;
+    secrets.github_key = {
+      key = "github_key";
+      mode = "0400";
+      owner = "alex";
+    };
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
