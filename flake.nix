@@ -13,7 +13,7 @@
     };
   };
 
-    outputs = {self, nixpkgs, home-manager, sops-nix , ...}:
+    outputs = {self, nixpkgs, home-manager, sops-nix , ...}@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -22,6 +22,7 @@
         nixosConfigurations = {
           nixos = lib.nixosSystem {
             inherit system;
+            specialArgs = { inherit inputs; };
             modules = [
               ./configuration.nix
               home-manager.nixosModules.home-manager

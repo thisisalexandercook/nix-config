@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
@@ -15,7 +15,9 @@
 
   # Home Manager
   home-manager.users.alex = {
-    imports = [ ./home.nix ];
+    imports = [ ./home.nix
+                inputs.sops-nix.homeManagerModules.sops
+              ];
   };
 
   # Bootloader.
@@ -129,13 +131,7 @@
 
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-    age.keyFile = "/home/alex/.config/sops/age/keys.txt";
-    defaultSopsFile = ./secrets/secrets.yaml;
-    secrets.github_key = {
-      key = "github_key";
-      mode = "0400";
-      owner = "alex";
-    };
+     defaultSopsFile = ./secrets/secrets.yaml;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
