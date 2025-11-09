@@ -1,3 +1,5 @@
 .emacs.d/eln-cache
 .emacs.d/elpa
 .emacs.d/auto-save-list
+.emacs.d/transient
+.emacs.d/session*
