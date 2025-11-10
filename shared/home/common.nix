@@ -104,6 +104,7 @@ programs.ssh = {
     pkgs.python3
     pkgs.rclone
     pkgs.syncthing
+    pkgs.unzip
   ];
 
   # dconf settings (GNOME only)
