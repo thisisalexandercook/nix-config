@@ -1,5 +1,5 @@
-.emacs.d/eln-cache
-.emacs.d/elpa
-.emacs.d/auto-save-list
-.emacs.d/transient
-.emacs.d/session*
+shared/home/.emacs.d/eln-cache
+shared/home/.emacs.d/elpa
+shared/home/.emacs.d/auto-save-list
+shared/home/.emacs.d/transient
+shared/home/.emacs.d/session*

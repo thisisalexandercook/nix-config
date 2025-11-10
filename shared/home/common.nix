@@ -28,7 +28,7 @@ programs.git = {
 
 sops = {
     age.keyFile = "/home/alex/.config/sops/age/keys.txt";
-    defaultSopsFile = ./secrets/secrets.yaml; # Assumes home.nix is in the same dir
+    defaultSopsFile = ../../secrets/secrets.yaml; # Assumes home.nix is in the same dir
 
     secrets.github_key = {
       key = "github_key";
@@ -39,10 +39,8 @@ sops = {
 programs.ssh = {
     enable = true;
 
-    # We are using matchBlocks as you suggested
     matchBlocks = {
       "github.com" = {
-        # 'github.com' is the host
         hostname = "github.com";
         user = "git";
         identityFile = "${config.sops.secrets.github_key.path}";
@@ -57,4 +55,14 @@ programs.ssh = {
     pkgs.python3
     pkgs.rclone
   ];
+
+  # dconf settings (GNOME only)
+  dconf = {
+    enable = true;
+    settings = {
+      "org/gnome/desktop/input-sources" = {
+        xkb-options = [ "ctrl:nocaps" ];
+      };
+    };
+  };
 }

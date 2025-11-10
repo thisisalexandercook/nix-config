@@ -5,41 +5,30 @@
 { config, pkgs, inputs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
-
   # Experimental Features
   nix.settings.experimental-features = [ "nix-command" "flakes"];
-
-  # Home Manager
-  home-manager.users.alex = {
-    imports = [ ./home.nix
-                inputs.sops-nix.homeManagerModules.sops
-              ];
-  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPackages = pkgs.linuxPackagesFor (
-    pkgs.linux_6_12.override {
-      argsOverride = rec {
-        src = pkgs.fetchurl {
-          url = "mirror://kernel/linux/kernel/v6.x/linux-${version}.tar.xz";
-          sha256 = "sha256-sExbPl324KpenNHv5Sf6yZ+d05pDuX8Tsi+MqT5SS6c=";
-        };
-        version = "6.12.31";
-        modDirVersion = "6.12.31";
-      };
-    }
-  );
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  #kernal that helps with freezing issue
+  #  boot.kernelPackages = pkgs.linuxPackagesFor (
+  #    pkgs.linux_6_12.override {
+  #      argsOverride = rec {
+  #        src = pkgs.fetchurl {
+  #          url = "mirror://kernel/linux/kernel/v6.x/linux-${version}.tar.xz";
+  #          sha256 = "sha256-sExbPl324KpenNHv5Sf6yZ+d05pDuX8Tsi+MqT5SS6c=";
+  #        };
+  #        version = "6.12.31";
+  #        modDirVersion = "6.12.31";
+  #      };
+  #    }
+  #  );
+
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -59,9 +48,18 @@
   services.xserver.enable = true;
 
   # Enable the KDE Plasma 5 Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.wayland.enable = true;
+  # services.desktopManager.plasma6.enable = true;
+
+  # Enable GNOME Desktop Environment (Pre 25.11 options)
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
+
+  # Enable GNOME Desktop Environment (As of 25.11 options)
+  # services.displayManager.gdm.enable = true;
+  # services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -131,7 +129,7 @@
 
   sops = {
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-     defaultSopsFile = ./secrets/secrets.yaml;
+     defaultSopsFile = ../../secrets/secrets.yaml;
   };
 
   # Some programs need SUID wrappers, can be configured further or are

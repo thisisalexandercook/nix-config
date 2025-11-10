@@ -2,7 +2,7 @@
 { config, pkgs, ... }:
 
 let
-  sourcePath = config.home.homeDirectory + "/nix-config/.emacs.d";
+  sourcePath = config.home.homeDirectory + "/nix-config/shared/home/.emacs.d";
   configSrc = config.lib.file.mkOutOfStoreSymlink sourcePath;
 in
 
