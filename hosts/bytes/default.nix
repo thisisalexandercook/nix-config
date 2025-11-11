@@ -5,4 +5,19 @@
   imports = [ ./hardware-configuration.nix ];
 
   networking.hostName = "bytes";
+
+  # kernal that helps with freezing issue
+   boot.kernelPackages = pkgs.linuxPackagesFor (
+     pkgs.linux_6_12.override {
+       argsOverride = rec {
+         src = pkgs.fetchurl {
+           url = "mirror://kernel/linux/kernel/v6.x/linux-${version}.tar.xz";
+           sha256 = "sha256-sExbPl324KpenNHv5Sf6yZ+d05pDuX8Tsi+MqT5SS6c=";
+         };
+         version = "6.12.31";
+         modDirVersion = "6.12.31";
+       };
+     }
+   );
+
 }
