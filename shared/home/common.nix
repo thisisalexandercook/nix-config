@@ -27,14 +27,37 @@ programs.git = {
 };
 
 sops = {
-    age.keyFile = "/home/alex/.config/sops/age/keys.txt";
-    defaultSopsFile = ../../secrets/secrets.yaml; # Assumes home.nix is in the same dir
+  age.keyFile = "/home/alex/.config/sops/age/keys.txt";
+  defaultSopsFile = ../../secrets/secrets.yaml;
 
-    secrets.github_key = {
-      key = "github_key";
-      mode = "0400";
+  secrets.github_key = {
+    key = "github_key";
+    mode = "0400";
+  };
+
+  secrets.rclone_config = {
+    key = "rclone_config";
+    mode = "0400";
+  };
+};
+
+programs.rclone = {
+  enable = true;
+
+  remotes = {
+    gdrive = {
+      config = {
+        type = "drive";
+        scope = "drive";
+      };
+        secrets = {
+          token =    config.sops.secrets.rclone_config.path;
+        };
+      };
     };
   };
+
+
 
 programs.ssh = {
     enable = true;
