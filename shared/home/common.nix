@@ -39,6 +39,11 @@ sops = {
     key = "rclone_config";
     mode = "0400";
   };
+
+  secrets.syncthing_password = {
+    key = "syncthing_password";
+    mode = "0400";
+  };
 };
 
 programs.rclone = {
@@ -63,6 +68,19 @@ programs.rclone = {
   };
 };
 
+services.syncthing = {
+  enable = true;
+
+  guiAddress = "127.0.0.1:8384";
+  passwordFile = config.sops.secrets.syncthing_password.path;
+
+  settings = {
+    gui = {
+      user = "alex";
+    };
+  };
+};
+
 programs.ssh = {
     enable = true;
 
@@ -81,6 +99,7 @@ programs.ssh = {
     pkgs.xournalpp
     pkgs.python3
     pkgs.rclone
+    pkgs.syncthing
   ];
 
   # dconf settings (GNOME only)
