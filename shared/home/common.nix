@@ -82,6 +82,23 @@ services.syncthing = {
     gui = {
       user = "alex";
     };
+
+    folders = {
+      "notes" = {
+        path = "${config.home.homeDirectory}/notes";
+        id = "notes-folder-id";
+        devices = [ "bits" "bytes" ];
+      };
+    };
+
+    devices = {
+      "bits" = {
+        id = "TVRTKW2-CBPGPV5-4EPO7NC-FCJNX75-6MVXVFE-LIMCX2C-RL45VIY-POMQHQT";
+      };
+      "bytes" = {
+        id = "LP6IK6T-DVBDKZC-EIZN5SK-STYG7LU-NCDA3I6-APUUPWD-YAQAGID-2N7GFQ6";
+      };
+    };
   };
 };
 
