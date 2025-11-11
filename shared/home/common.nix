@@ -50,14 +50,18 @@ programs.rclone = {
         type = "drive";
         scope = "drive";
       };
-        secrets = {
-          token =    config.sops.secrets.rclone_config.path;
+      secrets = {
+        token = config.sops.secrets.rclone_config.path;
+      };
+      mounts = {
+        "books" = {
+          enable = true;
+          mountPoint = "${config.home.homeDirectory}/books";
         };
       };
     };
   };
-
-
+};
 
 programs.ssh = {
     enable = true;
