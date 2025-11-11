@@ -62,6 +62,10 @@ programs.rclone = {
         "books" = {
           enable = true;
           mountPoint = "${config.home.homeDirectory}/books";
+          options = {
+            vfs_cache_mode = "full";
+            dir_cache_time = "10m";
+          };
         };
       };
     };
