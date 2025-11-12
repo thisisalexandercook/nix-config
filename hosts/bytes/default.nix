@@ -20,4 +20,10 @@
      }
    );
 
+   # SSD permissions
+   systemd.tmpfiles.rules = [
+  # Type Path       Mode  User  Group  Age  Argument
+  "d    /mnt/data  0755  alex  users  -    -"
+];
+
 }
