@@ -1,0 +1,52 @@
+** %<%Y-%m-%d> — Training
+:PROPERTIES:
+:DATE:  %<%Y-%m-%d>
+:CYCLE: %^{CYCLE}
+:WEEK:  %^{WEEK|1|2|3}
+:TYPE:  %^{TYPE|squat|deadlift|bench|press}
+:END:
+
+# Current training maxes for reference (edit here when they change)
+#+NAME: max-lifts
+| lift     |    max |
+|----------+--------|
+| bench    | 180.57 |
+| squat    | 186.78 |
+| deadlift | 192.44 |
+| press    |  50.94 |
+
+#+NAME: %<%y-%m-%d>-warmup
+| Component     | Time(s) | Set | Reps | Note       |
+|---------------+---------+-----+------+------------|
+| Elephant Walk |         |   1 |    5 |            |
+|               |         |   2 |    5 |            |
+| Toe Touch     |      30 |   1 |      |            |
+| Hip Flexor    |      30 |   1 |      | Right side |
+|               |      30 |   2 |      | Left side  |
+| Pancake       |      30 |   1 |      |            |
+| Figure 4      |      30 |   1 |      | Right side |
+|               |      30 |   2 |      | Left side  |
+| Lat Stretch   |      30 |   1 |      |            |
+| Side Stretch  |      30 |   1 |      | Right side |
+|               |      30 |   2 |      | Left side  |
+
+#+NAME: %<%y-%m-%d>-lift
+| Component | Set | Reps | Weight | Note |
+|-----------+-----+------+--------+------|
+| %\3       |   1 |      |        |      |
+|           |   2 |      |        |      |
+|           |   3 |      |        |      |
+#+TBLFM: $4=if("$PROP_TYPE"=="(bench)", round(remote(max-lifts,@2$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(squat)",    round(remote(max-lifts,@3$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(deadlift)", round(remote(max-lifts,@4$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(press)", round(remote(max-lifts,@5$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, ""))))::$3=if($PROP_WEEK=1,5,if($PROP_WEEK=2,3,if($PROP_WEEK=3,if($2=1,5,if($2=2,3,1)),"")))
+
+#+NAME: %<%y-%m-%d>-accessories
+| Component   | Sets | Reps | Weight | Note |
+|-------------+------+------+--------+------|
+| Split Squat |    5 |   10 |      0 |      |
+| Dip         |    5 |    4 |      0 |      |
+| Lat Raise   |    5 |   10 |     10 |      |
+| Leg Raise   |    5 |   10 |      0 |      |
+
+#+NAME: %<%y-%m-%d>-conditioning
+| Component | Time(min) | Heart Rate(avg.) | Power(watts avg.) | Note |
+|-----------+-----------+------------------+-------------------+------|
+| Bike      |           |                  |                   |      |

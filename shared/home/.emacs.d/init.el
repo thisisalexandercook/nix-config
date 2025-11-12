@@ -10,6 +10,10 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
+;; load-path
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
+
 ;; Disable auto-save files (#file#)
 (setq auto-save-default nil)
 
@@ -195,7 +199,6 @@
        "#+END:\n\n")))
   (add-hook 'denote-journal-hook #'my/denote-journal-insert-template))
 
-
 ;; yaml-mode
 (use-package yaml-mode
   :ensure t
@@ -206,15 +209,62 @@
   :ensure t
   :mode ("\\.epub\\'" . nov-mode))
 
+;; org
+(use-package org
+  :ensure nil
+  :init
+  (require 'org-capture)
+  (require 'time-tracking)
+  :config
+  (setq org-M-RET-may-split-line '((default . nil)))
+  (setq org-insert-heading-respect-content t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (setq org-directory "~/notes")
+  (setq org-agenda-files (list
+			  (expand-file-name "journal" org-directory)
+			  (expand-file-name "20250925T125000--habits__agenda.org" org-directory)))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAIT(w@)" "BLOCK(b)" "ACTIVE(a)" "|" "CANCEL(c!)" "DONE(d!)")))
+  (setq org-todo-keyword-faces
+	'(("TODO"    . (:foreground "red" :weight bold))
+          ("WAIT"    . (:foreground "orange" :weight bold))
+          ("BLOCK"   . (:foreground "blue" :weight bold))
+          ("ACTIVE"  . (:foreground "green" :weight bold))
+          ("CANCEL"  . (:foreground "grey" :weight bold))
+          ("DONE"    . (:foreground "forest green" :weight bold))))
+  (setq org-agenda-prefix-format
+	'((agenda . "%t ")
+          (todo   . " ")
+          (tags   . " ")
+          (search . " ")))
+  (setq org-agenda-custom-commands
+	'(("D" "Daily agenda"
+           ((todo "TODO"
+                  ((org-agenda-overriding-header "Tasks")
+                   (org-agenda-skip-function #'my/agenda-skip-habits)))
+            (todo "WAIT"
+                  ((org-agenda-overriding-header "Pending")
+                   (org-agenda-skip-function #'my/agenda-skip-habits)))
+            (agenda ""
+                    ((org-agenda-block-separator nil)
+                     (org-agenda-span 1)
+                     (org-agenda-overriding-header "\nDaily Agenda")))))))
+
+  (add-to-list 'org-capture-templates
+ '("t" "Training"
+   plain
+   (function buffer-file-name)
+   (file "~/.emacs.d/lisp/org-util/training-template.org")
+   :immediate-finish t))
+  )
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(company-coq consult denote-journal eat eshell-prompt-extras magit
-		 marginalia nix-mode nov orderless proof-general
-		 vertico yaml-mode)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
