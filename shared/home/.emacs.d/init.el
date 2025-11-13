@@ -209,6 +209,12 @@
   :ensure t
   :mode ("\\.epub\\'" . nov-mode))
 
+;; groovy-mode
+(use-package groovy-mode
+  :ensure t
+  :mode (("\\.groovy\\'" . groovy-mode)
+         ("\\.gradle\\'" . groovy-mode)))
+
 ;; org
 (use-package org
   :ensure nil
@@ -264,7 +270,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(company-coq consult denote-journal eat eshell-prompt-extras
+		 groovy-mode magit marginalia nix-mode nov orderless
+		 proof-general vertico yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
