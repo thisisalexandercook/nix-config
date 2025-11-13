@@ -11,9 +11,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {self, nixpkgs, home-manager, sops-nix , ...}@inputs:
+  outputs = {self, nixpkgs, home-manager, sops-nix , flake-utils, ...}@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -68,5 +69,20 @@
             ];
           };
         };
+
+        # Development Environments
+        devShells = flake-utils.lib.eachDefaultSystem (system:
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in
+            {
+              rocq = pkgs.mkShell {
+                buildInputs = with pkgs; [
+                  rocq-core
+                  rocqPackages.stdlib
+                ];
+              };
+            }
+        );
       };
 }
