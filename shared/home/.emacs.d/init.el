@@ -220,6 +220,12 @@
  :config
  (direnv-mode))
 
+;; beframe
+(use-package beframe
+  :ensure t
+  :config
+  (beframe-mode 1))
+
 ;; org
 (use-package org
   :ensure nil
@@ -276,9 +282,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(company-coq consult denote-journal direnv eat eshell-prompt-extras
-		 groovy-mode magit marginalia nix-mode nov orderless
-		 proof-general vertico yaml-mode)))
+   '(beframe company-coq consult denote-journal direnv eat
+	     eshell-prompt-extras groovy-mode magit marginalia
+	     nix-mode nov orderless proof-general vertico yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
