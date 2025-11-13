@@ -112,6 +112,12 @@ programs.ssh = {
       identityFile = "${config.sops.secrets.github_key.path}";
     };
   };
+};
+
+programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
 
   home.packages = [
     pkgs.jdk
@@ -120,6 +126,8 @@ programs.ssh = {
     pkgs.rclone
     pkgs.syncthing
     pkgs.unzip
+    pkgs.direnv
+    pkgs.nix-direnv
   ];
 
   # dconf settings (GNOME only)
