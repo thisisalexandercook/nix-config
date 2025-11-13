@@ -5,3 +5,4 @@ shared/home/.emacs.d/transient
 shared/home/.emacs.d/session*
 shared/home/.emacs.d/tramp
 shared/home/.emacs.d/eshell
+shared/home/.emacs.d/bookmarks
