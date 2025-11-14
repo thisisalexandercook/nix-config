@@ -127,6 +127,7 @@ programs.direnv = {
     pkgs.unzip
     pkgs.direnv
     pkgs.nix-direnv
+    pkgs.aporetic
   ];
 
   # dconf settings (GNOME only)

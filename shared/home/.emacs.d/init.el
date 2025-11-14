@@ -57,6 +57,20 @@
   ;; Dark theme: modus-vivendi. Light theme: modus-operandi
   (load-theme 'modus-operandi t))
 
+;; fontaine
+(use-package fontaine
+  :ensure t)
+
+(setq fontaine-presets
+      '((regular
+	 :default-family "Aporetic Sans Mono"
+	 :default-height 120
+	 :line spacing 1)
+	(large
+	 :default-family "Aporetic Sans Mono"
+	 :default-height 170
+	 :line spacing 1)))
+
 ;; orderless
 (use-package orderless
   :ensure t
@@ -283,8 +297,9 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(beframe company-coq consult denote-journal direnv eat
-	     eshell-prompt-extras groovy-mode magit marginalia
-	     nix-mode nov orderless proof-general vertico yaml-mode)))
+	     eshell-prompt-extras fontaine groovy-mode magit
+	     marginalia nix-mode nov orderless proof-general vertico
+	     yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -39,7 +39,6 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-
   # Enable GNOME Desktop Environment (As of 25.11 options)
   # services.displayManager.gdm.enable = true;
   # services.desktopManager.gnome.enable = true;
