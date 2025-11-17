@@ -120,7 +120,6 @@ programs.direnv = {
   };
 
   home.packages = [
-    pkgs.jdk
     pkgs.xournalpp
     pkgs.python3
     pkgs.rclone

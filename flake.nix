@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,28 +15,51 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {self, nixpkgs, home-manager, sops-nix , flake-utils, ...}@inputs:
+  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, sops-nix , flake-utils, ...}@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
     in
-    (flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
+      (flake-utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+        in
+          {
+            devShells = {
+
+              # rocq dev shell
+              rocq = pkgs.mkShell {
+                buildInputs = with pkgs; [
+                  rocq-core
+                  rocqPackages.stdlib
+                ];
+              };
+
+              # jdk 21 dev shell
+              java21 = pkgs.mkShell {
+                buildInputs = with pkgs; [
+                  jdk21
+                  gradle
+                  jdt-language-server
+                ];
+              };
+
+              # jdk 25 dev shell
+              java25 = pkgs-unstable.mkShell {
+                buildInputs = with pkgs-unstable; [
+                  javaPackages.compiler.openjdk25
+                  gradle
+                  jdt-language-server
+                ];
+              };
+            };
+          }
+      ))
+      //
       {
-        devShells.rocq = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            rocq-core
-            rocqPackages.stdlib
-          ];
-        };
-      }
-    ))
-    //
-    {
-      nixosConfigurations = {
+        nixosConfigurations = {
 
         # Laptop Host
         bits = lib.nixosSystem {
