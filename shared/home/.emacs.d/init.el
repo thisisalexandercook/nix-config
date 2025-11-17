@@ -59,17 +59,19 @@
 
 ;; fontaine
 (use-package fontaine
-  :ensure t)
-
-(setq fontaine-presets
-      '((regular
-	 :default-family "Aporetic Sans Mono"
-	 :default-height 120
-	 :line spacing 1)
-	(large
-	 :default-family "Aporetic Sans Mono"
-	 :default-height 170
-	 :line spacing 1)))
+  :ensure t
+  :config
+  (setq fontaine-presets
+        '((regular
+           :default-family "Aporetic Sans Mono"
+           :default-height 130
+           :line-spacing 1)
+          (large
+           :default-family "Aporetic Sans Mono"
+           :default-height 200
+           :line-spacing 1)))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (fontaine-mode 1))
 
 ;; orderless
 (use-package orderless
