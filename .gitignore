@@ -6,3 +6,5 @@ shared/home/.emacs.d/session*
 shared/home/.emacs.d/tramp
 shared/home/.emacs.d/eshell
 shared/home/.emacs.d/bookmarks
+shared/home/.emacs.d/nov-places
+shared/home/.emacs.d/projects
