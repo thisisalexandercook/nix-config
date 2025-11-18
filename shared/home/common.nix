@@ -36,8 +36,18 @@ sops = {
     mode = "0400";
   };
 
-  secrets.rclone_config = {
-    key = "rclone_config";
+  secrets.rclone_token = {
+    key = "rclone_token";
+    mode = "0400";
+  };
+
+  secrets.rclone_client_id = {
+    key = "rclone_client_id";
+    mode = "0400";
+  };
+
+  secrets.rclone_client_secret = {
+    key = "rclone_client_secret";
     mode = "0400";
   };
 
@@ -49,6 +59,7 @@ sops = {
 
 programs.rclone = {
   enable = true;
+  requiresUnit = "sops-nix.service";
 
   remotes = {
     gdrive = {
@@ -57,7 +68,9 @@ programs.rclone = {
         scope = "drive";
       };
       secrets = {
-        token = config.sops.secrets.rclone_config.path;
+        client_id = config.sops.secrets.rclone_client_id.path;
+        client_secret = config.sops.secrets.rclone_client_secret.path;
+        token = config.sops.secrets.rclone_token.path;
       };
       mounts = {
         "books" = {
