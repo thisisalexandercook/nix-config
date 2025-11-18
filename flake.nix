@@ -2,10 +2,9 @@
   description = "main config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
@@ -15,7 +14,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {self, nixpkgs, nixpkgs-unstable, home-manager, sops-nix , flake-utils, ...}@inputs:
+  outputs = {self, nixpkgs, home-manager, sops-nix , flake-utils, ...}@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -24,7 +23,6 @@
       (flake-utils.lib.eachDefaultSystem (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
         in
           {
             devShells = {
@@ -47,8 +45,8 @@
               };
 
               # jdk 25 dev shell
-              java25 = pkgs-unstable.mkShell {
-                buildInputs = with pkgs-unstable; [
+              java25 = pkgs.mkShell {
+                buildInputs = with pkgs; [
                   javaPackages.compiler.openjdk25
                   gradle
                   jdt-language-server
