@@ -151,6 +151,9 @@ programs.direnv = {
       "org/gnome/desktop/input-sources" = {
         xkb-options = [ "ctrl:nocaps" ];
       };
+      "org/gnome/desktop/interface" = {
+      enable-hot-corners = false;
+    };
     };
   };
 }
