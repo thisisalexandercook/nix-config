@@ -231,6 +231,11 @@
   :mode (("\\.groovy\\'" . groovy-mode)
          ("\\.gradle\\'" . groovy-mode)))
 
+;; markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :mode ("\\.md\\'" . gfm-mode))
+
 ;; direnv
 (use-package direnv
  :config
@@ -300,8 +305,8 @@
  '(package-selected-packages
    '(beframe company-coq consult denote-journal direnv eat
 	     eshell-prompt-extras fontaine groovy-mode magit
-	     marginalia nix-mode nov orderless proof-general vertico
-	     yaml-mode)))
+	     marginalia markdown-mode nix-mode nov orderless
+	     proof-general vertico yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
