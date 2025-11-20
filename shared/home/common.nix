@@ -55,6 +55,11 @@ sops = {
     key = "syncthing_password";
     mode = "0400";
   };
+
+  secrets.gitlab_key = {
+    key = "gitlab_key";
+    mode = "0400";
+  };
 };
 
 programs.rclone = {
@@ -124,6 +129,11 @@ programs.ssh = {
       hostname = "github.com";
       user = "git";
       identityFile = "${config.sops.secrets.github_key.path}";
+    };
+    "git.uwaterloo.ca" = {
+      hostname = "git.uwaterloo.ca";
+      user = "git";
+      identityFile = "${config.sops.secrets.gitlab_key.path}";
     };
   };
 };
