@@ -108,6 +108,11 @@ services.syncthing = {
         id = "notes-folder-id";
         devices = [ "bits" "bytes" ];
       };
+      "scratch" = {
+        path = "${config.home.homeDirectory}/scratch";
+        id = "scratch-folder-id";
+        devices = [ "bits" "bytes"];
+      };
     };
 
     devices = {
