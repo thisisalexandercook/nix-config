@@ -266,6 +266,18 @@
   :ensure nil
   :mode "\\.json\\'")
 
+;; eglot
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-stay-out-of 'imenu)
+  (setq eglot-report-progress nil)
+
+  (add-to-list 'eglot-server-programs
+               '(java-mode java-ts-mode)
+	       .
+	       ("jdtls")))
+
 ;; org
 (use-package org
   :ensure nil
