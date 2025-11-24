@@ -23,6 +23,21 @@
       (flake-utils.lib.eachDefaultSystem (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+
+          setupJdkSource = jdkPackage: folderName: ''
+            LOCAL_SRC_DIR="$HOME/jdk-sources/${folderName}"
+            JDK_ZIP="${jdkPackage}/lib/src.zip"
+
+            if [ ! -d "$LOCAL_SRC_DIR" ]; then
+              if [ -f "$JDK_ZIP" ]; then
+                mkdir -p "$LOCAL_SRC_DIR"
+                ${pkgs.unzip}/bin/unzip -q "$JDK_ZIP" -d "$LOCAL_SRC_DIR"
+                chmod -R u+w "$LOCAL_SRC_DIR"
+              else
+                echo "Warning: Could not find src.zip at $JDK_ZIP"
+              fi
+            fi
+          '';
         in
           {
             devShells = {
@@ -42,6 +57,7 @@
                   gradle
                   jdt-language-server
                 ];
+                shellHook = setupJdkSource pkgs.jdk21 "jdk21";
               };
 
               # jdk 25 dev shell
@@ -51,6 +67,7 @@
                   gradle
                   jdt-language-server
                 ];
+                shellHook = setupJdkSource pkgs.javaPackages.compiler.openjdk25 "jdk25";
               };
             };
           }
