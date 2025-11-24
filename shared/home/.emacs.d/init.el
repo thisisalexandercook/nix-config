@@ -218,11 +218,6 @@
        "#+END:\n\n")))
   (add-hook 'denote-journal-hook #'my/denote-journal-insert-template))
 
-;; yaml-mode
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.yml\\'" "\\.yaml\\'"))
-
 ;; nov
 (use-package nov
   :ensure t
@@ -249,6 +244,27 @@
   :ensure t
   :config
   (beframe-mode 1))
+
+;; tree-sitter
+(use-package treesit
+  :ensure nil
+  :custom
+  (treesit-font-lock-level 4)
+  :init
+  (setq major-mode-remap-alist
+        '((java-mode   . java-ts-mode)
+          (python-mode . python-ts-mode)
+          (sh-mode     . bash-ts-mode))))
+
+;; yaml-ts-mode
+(use-package yaml-ts-mode
+  :ensure nil
+  :mode "\\.ya?ml\\'")
+
+;; json-ts-mode
+(use-package json-ts-mode
+  :ensure nil
+  :mode "\\.json\\'")
 
 ;; org
 (use-package org

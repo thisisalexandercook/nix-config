@@ -10,6 +10,9 @@ in
   programs.emacs = {
     enable = true;
     package = pkgs.emacs;
+    extraPackages = epkgs: with epkgs; [
+    treesit-grammars.with-all-grammars
+  ];
   };
 
   home.file.".emacs.d".source = configSrc;
