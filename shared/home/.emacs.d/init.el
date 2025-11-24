@@ -234,10 +234,9 @@
   :ensure t
   :mode ("\\.md\\'" . gfm-mode))
 
-;; direnv
-(use-package direnv
- :config
- (direnv-mode))
+;; envrc
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
 
 ;; beframe
 (use-package beframe
@@ -334,7 +333,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(beframe company-coq consult denote-journal direnv eat
+   '(beframe company-coq consult denote-journal eat envrc
 	     eshell-prompt-extras fontaine groovy-mode magit
 	     marginalia markdown-mode nix-mode nov orderless
 	     proof-general vertico yaml-mode)))
