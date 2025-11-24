@@ -6,3 +6,4 @@
     (kill-new formatted)
     (message "New max = %s (copied to kill-ring)" formatted)
     result))
+(provide 'training-calculations)

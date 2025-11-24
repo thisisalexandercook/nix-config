@@ -14,6 +14,9 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
 
+;; /lisp imports
+(require 'training-calculations)
+
 ;; Disable auto-save files (#file#)
 (setq auto-save-default nil)
 
