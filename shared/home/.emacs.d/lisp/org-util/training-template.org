@@ -10,10 +10,10 @@
 #+NAME: max-lifts
 | lift     |    max |
 |----------+--------|
-| bench    | 180.57 |
-| squat    | 186.78 |
-| deadlift | 192.44 |
-| press    |  50.94 |
+| bench    | 198.05 |
+| squat    | 203.88 |
+| deadlift | 215.53 |
+| press    |  56.60 |
 
 #+NAME: %<%y-%m-%d>-warmup
 | Component     | Time(s) | Set | Reps | Note       |
