@@ -51,7 +51,17 @@
   };
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+services.printing = {
+    enable = true;
+    drivers = [ pkgs.gutenprint ];
+};
+
+services.avahi = {
+    enable = true;
+    nssmdns4 = true; # vital for resolving .local hostnames
+    openFirewall = true; # opens UDP 5353 for mDNS
+  };
+
 
   hardware.enableRedistributableFirmware = true;
 
@@ -125,8 +135,8 @@
 
   # Open ports in the firewall.
   networking.firewall = {
-    allowedTCPPorts = [ 22000 ];
-    allowedUDPPorts = [ 22000 21027 ];
+    allowedTCPPorts = [ 22000 631 ];
+    allowedUDPPorts = [ 22000 21027 631 5353 ];
   };
 
   nix.gc = {
