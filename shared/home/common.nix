@@ -162,6 +162,7 @@ programs.direnv = {
     pkgs.direnv
     pkgs.nix-direnv
     pkgs.aporetic
+    pkgs.jdk21
   ];
 
   # dconf settings (GNOME only)

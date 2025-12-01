@@ -50,16 +50,6 @@
                 ];
               };
 
-              # jdk 21 dev shell
-              java21 = pkgs.mkShell {
-                buildInputs = with pkgs; [
-                  jdk21
-                  gradle
-                  jdt-language-server
-                ];
-                shellHook = setupJdkSource pkgs.jdk21 "jdk21";
-              };
-
               # jdk 25 dev shell
               java25 = pkgs.mkShell {
                 buildInputs = with pkgs; [
@@ -67,7 +57,10 @@
                   gradle
                   jdt-language-server
                 ];
-                shellHook = setupJdkSource pkgs.javaPackages.compiler.openjdk25 "jdk25";
+                shellHook = ''
+                  ${setupJdkSource pkgs.javaPackages.compiler.openjdk25 "jdk25"}
+                  export JAVA_HOME=${pkgs.javaPackages.compiler.openjdk25}
+                '';
               };
             };
           }
