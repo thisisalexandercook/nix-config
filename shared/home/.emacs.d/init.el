@@ -283,15 +283,14 @@
   :init
   (require 'org-capture)
   (require 'time-tracking)
+  (require 'pull-block)
+  (require 'org-id)
   :config
   (setq org-M-RET-may-split-line '((default . nil)))
   (setq org-insert-heading-respect-content t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
   (setq org-directory "~/notes")
-  (setq org-agenda-files (list
-			  (expand-file-name "journal" org-directory)
-			  (expand-file-name "20250925T125000--habits__agenda.org" org-directory)))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "WAIT(w@)" "BLOCK(b)" "ACTIVE(a)" "|" "CANCEL(c!)" "DONE(d!)")))
   (setq org-todo-keyword-faces
@@ -308,24 +307,58 @@
           (search . " ")))
   (setq org-agenda-custom-commands
 	'(("D" "Daily agenda"
-           ((todo "TODO"
-                  ((org-agenda-overriding-header "Tasks")
-                   (org-agenda-skip-function #'my/agenda-skip-habits)))
+           ((todo "ACTIVE"
+                  ((org-agenda-overriding-header "CURRENT TIMEBLOCK")
+		   (org-agenda-files (list (denote-journal-path-to-new-or-existing-entry)))
+                   (org-agenda-remove-tags t)))
+	    (todo "BLOCK"
+                  ((org-agenda-overriding-header "🗓️  TODAY'S TIMEBLOCKS")
+		   (org-agenda-files (list (denote-journal-path-to-new-or-existing-entry)))
+                   (org-agenda-prefix-format "  %i %?-12t")))
+	    (todo "BLOCK"
+                  ((org-agenda-overriding-header "📂 TIMEBLOCK LIST")
+                   (org-agenda-files '("20251203T141526--projects__projects.org"))
+		   (org-agenda-prefix-format "  %i %?-12t")
+                   (org-agenda-sorting-strategy '(priority-down category-keep))))
+	    (tags-todo "work"
+                       ((org-agenda-overriding-header "💼 WORK INBOX")
+		       (org-agenda-files '("20251203T141103--todos__todos.org"))))
+	    (tags-todo "personal"
+                       ((org-agenda-overriding-header "🏠 PERSONAL INBOX")
+		       (org-agenda-files '("20251203T141103--todos__todos.org"))))
             (todo "WAIT"
-                  ((org-agenda-overriding-header "Pending")
-                   (org-agenda-skip-function #'my/agenda-skip-habits)))
+                  ((org-agenda-overriding-header "⏳ PENDING")))
+	    (todo "ACTIVE"
+                  ((org-agenda-overriding-header "⚠️  ZOMBIE CLOCKS")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'today))))
             (agenda ""
                     ((org-agenda-block-separator nil)
                      (org-agenda-span 1)
                      (org-agenda-overriding-header "\nDaily Agenda")))))))
 
-  (add-to-list 'org-capture-templates
- '("t" "Training"
-   plain
-   (function buffer-file-name)
-   (file "~/.emacs.d/lisp/org-util/training-template.org")
-   :immediate-finish t))
-  )
+(setq org-capture-templates
+      '(
+
+        ("w" "Work Task" entry
+         (file+headline "~/notes/20251203T141103--todos__todos.org" "Work")
+         "* TODO %? \n:PROPERTIES:\n:CREATED: %U\n:END:"
+         :empty-lines 1)
+
+        ("p" "Personal Task" entry
+         (file+headline "~/notes/20251203T141103--todos__todos.org" "Personal")
+         "* TODO %? \n:PROPERTIES:\n:CREATED: %U\n:END:"
+         :empty-lines 1)
+
+	("b" "Block Entry" entry
+         (file "~/notes/20251203T141526--projects__projects.org")
+         "* BLOCK %? :projects:\n:PROPERTIES:\n:ID: %(org-id-new)\n:CREATED: %U\n:END:\n"
+         :empty-lines 1)
+
+        ("t" "Training"
+         plain
+         (function buffer-file-name)
+         (file "~/.emacs.d/lisp/org-util/training-template.org")
+         :immediate-finish t))))
 
 ;; custom file
 (setq custom-file (locate-user-emacs-file "custom.el"))
