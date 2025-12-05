@@ -1,5 +1,41 @@
+;;; pull-block.el --- Helper for pulling project blocks into daily journal -*- lexical-binding: t; -*-
+
+(require 'org)
+(require 'org-agenda)
+(require 'org-id)
+(require 'denote)
+
+(defun my/get-training-file-path ()
+  "Find the Denote file tagged 'training'."
+  (let ((files (directory-files org-directory t "__.*training.*\\.org$")))
+    (if files
+        (car files)
+      (error "Could not find a file tagged 'training' in %s" org-directory))))
+
+(defun my/get-snapshot-maxes ()
+  "Read max-lifts from training log and return a string for the template."
+  (let ((file (my/get-training-file-path))
+        (maxes-alist '()))
+    (with-current-buffer (find-file-noselect file)
+      (save-excursion
+        (goto-char (point-min))
+        (if (re-search-forward "#\\+NAME: max-lifts" nil t)
+            (progn
+              (forward-line 1)
+              (let ((table (org-table-to-lisp)))
+                (dolist (row table)
+                  (when (and (listp row) (stringp (car row)))
+                    (push (cons (car row) (cadr row)) maxes-alist)))))
+          (error "Could not find #+NAME: max-lifts in training.org"))))
+    (format "#+NAME: Maxes_%s\n| Lift | Max |\n|----------+--------|\n| bench | %s |\n| squat | %s |\n| deadlift | %s |\n| press | %s |"
+            (format-time-string "%Y%m%d")
+            (cdr (assoc "bench" maxes-alist))
+            (cdr (assoc "squat" maxes-alist))
+            (cdr (assoc "deadlift" maxes-alist))
+            (cdr (assoc "press" maxes-alist)))))
+
 (defun my/instant-project-checkin ()
-  "Take the project at point, and move it into the journal"
+  "Take the project at point, create a Journal entry for it, and clock in immediately."
   (interactive)
   (let* ((marker (or (org-get-at-bol 'org-marker) (point-marker)))
          (buffer (marker-buffer marker))
@@ -7,96 +43,88 @@
          (headline "")
          (id "")
          (journal-file (denote-journal-path-to-new-or-existing-entry)))
-
     (with-current-buffer buffer
       (goto-char pos)
       (setq headline (org-get-heading t t t t))
       (setq id (org-id-get-create)))
-
+    (delete-other-windows)
+    (split-window-horizontally)
     (find-file journal-file)
 
     (goto-char (point-min))
     (if (re-search-forward "^\\* Time-block" nil t)
-        (org-end-of-subtree) ;; Append inside Time-block
-      (goto-char (point-max))) ;; Or just append to end of file
+        (org-end-of-subtree)
+      (goto-char (point-max)))
 
-    (insert (format "\n* BLOCK [[id:%s][%s]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"
+    (insert (format "\n** BLOCK [[id:%s][%s]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"
                     id
                     headline
-                    (format-time-string "[%Y-%m-%d %a %H:%M]")))
+                    (format-time-string "[%Y-%m-%d %a %H:%M]")))))
 
-    (backward-char 1)
-    (message "Checked in to '%s'!" headline)))
-(with-eval-after-load 'org-agenda
-  (define-key org-agenda-mode-map (kbd "k") 'my/instant-project-checkin))
-
-;; --- 1. FILE FINDERS ---
-
-(defun my/get-training-file-path ()
-  "Find the Denote file tagged 'training'."
-  (let ((files (directory-files org-directory t "__training.*\\.org$")))
-    (if files (car files) (error "No training file found!"))))
-
-;; --- 2. SNAPSHOT GENERATOR ---
-
-(defun my/get-snapshot-maxes ()
-  "Read global_maxes from training.org and return a string for the template."
-  (let ((file (my/get-training-file-path))
-        (maxes-alist '()))
-    (with-current-buffer (find-file-noselect file)
-      (save-excursion
-        (goto-char (point-min))
-        (when (re-search-forward "#\\+NAME: global_maxes" nil t)
-          (forward-line 1)
-          (let ((table (org-table-to-lisp)))
-            (dolist (row table)
-              (when (and (listp row) (stringp (car row)))
-                (push (cons (car row) (cadr row)) maxes-alist)))))))
-    ;; Return the formatted table string
-    (format "#+NAME: %%<%%Y-%%m-%%d>-maxes\n| Lift | Max |\n|----------+--------|\n| bench | %s |\n| squat | %s |\n| deadlift | %s |\n| press | %s |"
-            (cdr (assoc "bench" maxes-alist))
-            (cdr (assoc "squat" maxes-alist))
-            (cdr (assoc "deadlift" maxes-alist))
-            (cdr (assoc "press" maxes-alist)))))
-
-;; --- 3. THE "HOOK" LOGIC (Link to Journal) ---
-
-(defvar my/just-captured-training-p nil "Flag to track if we are capturing training.")
+(defvar my/just-captured-training-p nil "Flag: Are we in a training capture?")
+(defvar my/last-training-data nil "Storage: (headline . id) from the capture.")
 
 (defun my/start-training-session ()
-  "Interactive command to start the training workflow."
+  "Start the training workflow."
   (interactive)
   (setq my/just-captured-training-p t)
+  (setq my/last-training-data nil) ;; Reset storage
   (org-capture nil "t"))
 
-(defun my/link-training-to-journal ()
-  "Hook: Run after capture finishes. Link the new training entry to today's journal."
+(defun my/capture-training-prepare ()
+  "Run BEFORE finalize to grab the ID while the buffer is still alive."
   (when (and my/just-captured-training-p
              (not org-note-abort))
-    (let* ((headline "")
-           (id "")
-           (journal-file (denote-journal-extras-path-to-new-or-existing-entry)))
+    (save-excursion
+      (goto-char (point-min))
+      (let ((headline (org-get-heading t t t t))
+            (id (org-id-get-create)))
+        (setq my/last-training-data (cons headline id))))))
 
-      ;; A. Get ID from the new Training Entry
-      (with-current-buffer (org-capture-get :buffer)
-        (save-excursion
-          (goto-char (org-capture-get :begin-marker))
-          (setq headline (org-get-heading t t t t))
-          (setq id (org-id-get-create)) ;; Create ID in training.org so we can link to it
-          (save-buffer)))
+(defun my/capture-training-finalize ()
+  "Run AFTER finalize to write to the journal using the stored data."
+  (when (and my/just-captured-training-p
+             (not org-note-abort)
+             my/last-training-data)
+    (let ((headline (car my/last-training-data))
+          (id (cdr my/last-training-data))
+          (journal-file (denote-journal-path-to-new-or-existing-entry)))
 
-      ;; B. Create Block in Journal
       (find-file journal-file)
       (goto-char (point-max))
-      (insert (format "\n* BLOCK Training Session: %s [[id:%s][Link]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"                      headline id (format-time-string "[%Y-%m-%d %a %H:%M]")))
+      (insert (format "\n** BLOCK Training Session: %s [[id:%s][Link]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"
+                      headline id (format-time-string "[%Y-%m-%d %a %H:%M]")))))
 
-      ;; C. Clock In
-      (backward-char 1)
-      (org-clock-in)
-      (message "Training linked and clock started!")))
+  (setq my/just-captured-training-p nil)
+  (setq my/last-training-data nil))
 
-  (setq my/just-captured-training-p nil))
+(defvar my/captured-event-time nil "Temporary storage for the event timestamp.")
 
-(add-hook 'org-capture-after-finalize-hook 'my/link-training-to-journal)
+(defun my/get-journal-file-for-date ()
+  "Ask user for a date, set the global variable, and return the Denote path."
+  (let* ((time (org-read-date nil t nil "Event Date/Time: "))
+         (date-string (format-time-string "%Y-%m-%d" time)))
+    (setq my/captured-event-time time)
+    (denote-journal-path-to-new-or-existing-entry date-string)))
+
+(defun my/find-event-target-location ()
+  "Prompt for Work/Personal and move point to the end of that subtree."
+  (let* ((choice (read-char-choice "Category: [w]ork, [p]ersonal? " '(?w ?p)))
+         (header-name (if (eq choice ?w) "Work" "Personal"))
+         (tag-name    (if (eq choice ?w) ":work:" ":personal:")))
+
+    (goto-char (point-min))
+    (if (re-search-forward (format "^\\* %s" header-name) nil t)
+        (org-end-of-subtree)
+      (goto-char (point-max))
+      (insert (format "\n* %s %s\n" header-name tag-name)))))
+
+(add-hook 'org-capture-prepare-finalize-hook 'my/capture-training-prepare)
+
+(add-hook 'org-capture-after-finalize-hook 'my/capture-training-finalize)
+
+;; Keybinding
+(with-eval-after-load 'org-agenda
+  (define-key org-agenda-mode-map (kbd "k") 'my/instant-project-checkin))
 
 (provide 'pull-block)

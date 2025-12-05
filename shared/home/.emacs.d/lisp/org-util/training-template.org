@@ -1,15 +1,16 @@
-* %^{TYPE} 5/3/1 Session
+* %^{TYPE|squat|deadlift|bench|press} 5/3/1 Session
 :PROPERTIES:
 :DATE:  %<%Y-%m-%d>
 :CYCLE: %^{CYCLE}
 :WEEK:  %^{WEEK|1|2|3}
-:TYPE:  %1
+:TYPE:  %\1
 :END:
 
-# Insert the Snapshot Maxes Table dynamically
+# 1. SNAPSHOT MAXES
 %(my/get-snapshot-maxes)
 
-#+NAME: %<%Y-%m-%d>-warmup
+# 2. WARMUP
+#+NAME: Warmup_%<%Y%m%d>
 | Component     | Time(s) | Set | Reps | Note       |
 |---------------+---------+-----+------+------------|
 | Elephant Walk |         |   1 |    5 |            |
@@ -23,15 +24,17 @@
 | Side Stretch  |      30 |   1 |      | Right side |
 |               |      30 |   2 |      | Left side  |
 
-#+NAME: %<%Y-%m-%d>-lift
+# 3. MAIN LIFT
+#+NAME: Lift_%<%Y%m%d>
 | Component | Set | Reps | Weight | Note |
 |-----------+-----+------+--------+------|
-| %1        |   1 |      |        |      |
+| %\1       |   1 |      |        |      |
 |           |   2 |      |        |      |
 |           |   3 |      |        |      |
-#+TBLFM: $4=if("$PROP_TYPE"=="bench", round(remote(%<%Y-%m-%d>-maxes,@2$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="squat",    round(remote(%<%Y-%m-%d>-maxes,@3$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="deadlift", round(remote(%<%Y-%m-%d>-maxes,@4$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="press", round(remote(%<%Y-%m-%d>-maxes,@5$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, ""))))::$3=if($PROP_WEEK=1,5,if($PROP_WEEK=2,3,if($PROP_WEEK=3,if($2=1,5,if($2=2,3,1)),"")))
+#+TBLFM: $4=if("$PROP_TYPE"=="(bench)", round(remote(Maxes_%<%Y%m%d>,@2$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(squat)",    round(remote(Maxes_%<%Y%m%d>,@3$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(deadlift)", round(remote(Maxes_%<%Y%m%d>,@4$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, if("$PROP_TYPE"=="(press)", round(remote(Maxes_%<%Y%m%d>,@5$2) * (if($PROP_WEEK=1, if(@#=2,0.65, if(@#=3,0.75,0.85)), if($PROP_WEEK=2, if(@#=2,0.70, if(@#=3,0.80,0.90)), if($PROP_WEEK=3, if(@#=2,0.75, if(@#=3,0.85,0.95)), 1))))/5)*5, ""))))::$3=if($PROP_WEEK=1,5,if($PROP_WEEK=2,3,if($PROP_WEEK=3,if($2=1,5,if($2=2,3,1)),"")))
 
-#+NAME: %<%Y-%m-%d>-accessories
+# 4. ACCESSORIES
+#+NAME: Accessories_%<%Y%m%d>
 | Component   | Sets | Reps | Weight | Note |
 |-------------+------+------+--------+------|
 | Split Squat |    5 |   10 |      0 |      |
@@ -39,7 +42,9 @@
 | Lat Raise   |    5 |   10 |     10 |      |
 | Leg Raise   |    5 |   10 |      0 |      |
 
-#+NAME: %<%Y-%m-%d>-conditioning
+# 5. CONDITIONING
+#+NAME: Conditioning_%<%Y%m%d>
 | Component | Time(min) | Heart Rate(avg.) | Power(watts avg.) | Note |
 |-----------+-----------+------------------+-------------------+------|
 | Bike      |           |                  |                   |      |
+|           |           |                  |                   |      |

@@ -333,6 +333,7 @@
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'today))))
             (agenda ""
                     ((org-agenda-block-separator nil)
+		     (org-agenda-files (list (denote-journal-path-to-new-or-existing-entry)))
                      (org-agenda-span 1)
                      (org-agenda-overriding-header "\nDaily Agenda")))))))
 
@@ -352,6 +353,11 @@
 	("b" "Block Entry" entry
          (file "~/notes/20251203T141526--projects__projects.org")
          "* BLOCK %? :projects:\n:PROPERTIES:\n:ID: %(org-id-new)\n:CREATED: %U\n:END:\n"
+         :empty-lines 1)
+
+	("e" "Event" entry
+         (file+function my/get-journal-file-for-date my/find-event-target-location)
+         "* %? :event:\n:PROPERTIES:\n:LOCATION: %^{Location}\n:END:\n<%(format-time-string \"%Y-%m-%d %a %H:%M\" my/captured-event-time)>"
          :empty-lines 1)
 
 	("t" "Training Session" entry
