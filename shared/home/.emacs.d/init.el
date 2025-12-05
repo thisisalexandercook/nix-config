@@ -354,11 +354,11 @@
          "* BLOCK %? :projects:\n:PROPERTIES:\n:ID: %(org-id-new)\n:CREATED: %U\n:END:\n"
          :empty-lines 1)
 
-        ("t" "Training"
-         plain
-         (function buffer-file-name)
+	("t" "Training Session" entry
+         (file+olp+datetree my/get-training-file-path)
          (file "~/.emacs.d/lisp/org-util/training-template.org")
-         :immediate-finish t))))
+         :immediate-finish nil
+         :empty-lines 1))))
 
 ;; custom file
 (setq custom-file (locate-user-emacs-file "custom.el"))
