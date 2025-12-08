@@ -333,7 +333,8 @@
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'today))))
             (agenda ""
                     ((org-agenda-block-separator nil)
-		     (org-agenda-files (list (denote-journal-path-to-new-or-existing-entry)))
+		     (org-agenda-files (list (denote-journal-path-to-new-or-existing-entry)
+					     (my/get-todo-file-path)))
                      (org-agenda-span 1)
                      (org-agenda-overriding-header "\nDaily Agenda")))))))
 

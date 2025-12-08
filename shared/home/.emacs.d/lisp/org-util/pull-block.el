@@ -119,6 +119,12 @@
       (goto-char (point-max))
       (insert (format "\n* %s %s\n" header-name tag-name)))))
 
+(defun my/get-todo-file-path ()
+  (let ((files (directory-files org-directory t "__.*todos.*\\.org$")))
+    (if files
+        (car files)
+      (error "Could not find a file tagged 'todos' in %s" org-directory))))
+
 (add-hook 'org-capture-prepare-finalize-hook 'my/capture-training-prepare)
 
 (add-hook 'org-capture-after-finalize-hook 'my/capture-training-finalize)
