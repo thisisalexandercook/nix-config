@@ -13,6 +13,7 @@
 ;; load-path
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/ott" user-emacs-directory))
 
 ;; /lisp imports
 (require 'training-calculations)
@@ -371,3 +372,34 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+;; pdf-tools
+(use-package pdf-tools
+  :ensure nil
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  (setq pdf-view-continuous nil)
+  (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
+  (define-key pdf-view-mode-map (kbd "C-s") 'pdf-occur))
+
+;; tex
+(use-package tex
+  :ensure auctex
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (setq TeX-source-correlate-start-server t)
+  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t)
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer))
+
+;; ott
+(autoload 'ott-mode "ott-mode" "Major mode for editing Ott files." t)
+(add-to-list 'auto-mode-alist '("\\.ott\\'" . ott-mode))
