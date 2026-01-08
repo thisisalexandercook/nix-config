@@ -165,6 +165,7 @@ programs.direnv = {
     pkgs.jdk21
     pkgs.texlive.combined.scheme-full
     pkgs.ott
+    pkgs.gradle
   ];
 
   # dconf settings (GNOME only)
