@@ -163,7 +163,8 @@ programs.direnv = {
     pkgs.nix-direnv
     pkgs.aporetic
     pkgs.jdk21
-    pkgs.texlive.combined.scheme-medium
+    pkgs.texlive.combined.scheme-full
+    pkgs.ott
   ];
 
   # dconf settings (GNOME only)
