@@ -403,3 +403,8 @@
 ;; ott
 (autoload 'ott-mode "ott-mode" "Major mode for editing Ott files." t)
 (add-to-list 'auto-mode-alist '("\\.ott\\'" . ott-mode))
+
+;; adaptive wrap
+(use-package adaptive-wrap
+  :ensure t
+  :hook (prog-mode . adaptive-wrap-prefix-mode))
