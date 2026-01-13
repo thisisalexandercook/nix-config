@@ -14,6 +14,7 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/ott" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/cfg" user-emacs-directory))
 
 ;; /lisp imports
 (require 'training-calculations)
@@ -403,6 +404,10 @@
 ;; ott
 (autoload 'ott-mode "ott-mode" "Major mode for editing Ott files." t)
 (add-to-list 'auto-mode-alist '("\\.ott\\'" . ott-mode))
+
+;; cfg
+(autoload 'cfg-mode "cfg-mode" "Major mode for editing CFG files." t)
+(add-to-list 'auto-mode-alist '("\\.cfg\\'" . cfg-mode))
 
 ;; adaptive wrap
 (use-package adaptive-wrap
