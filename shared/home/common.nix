@@ -166,6 +166,7 @@ programs.direnv = {
     pkgs.texlive.combined.scheme-full
     pkgs.ott
     pkgs.gradle
+    pkgs.gnumake
   ];
 
   # dconf settings (GNOME only)
