@@ -412,4 +412,6 @@
 ;; adaptive wrap
 (use-package adaptive-wrap
   :ensure t
-  :hook (prog-mode . adaptive-wrap-prefix-mode))
+  :hook
+  (prog-mode . adaptive-wrap-prefix-mode)
+  (text-mode . adaptive-wrap-prefix-mode))
