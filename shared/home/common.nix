@@ -167,6 +167,7 @@ programs.direnv = {
     pkgs.ott
     pkgs.gradle
     pkgs.gnumake
+    pkgs.gemini-cli
   ];
 
   # dconf settings (GNOME only)
