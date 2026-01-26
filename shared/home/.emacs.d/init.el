@@ -415,3 +415,10 @@
   :hook
   (prog-mode . adaptive-wrap-prefix-mode)
   (text-mode . adaptive-wrap-prefix-mode))
+
+;; v-term
+(use-package vterm
+  :ensure t
+  :config
+  (setq vterm-max-scrollback 10000))
+

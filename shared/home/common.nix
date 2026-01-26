@@ -1,17 +1,9 @@
 # ./home.nix
-{ config, pkgs, ... }:
-let
-  gemini-pkg = pkgs.gemini-cli;
-  gemini-wrapped = pkgs.writeShellScriptBin "gemini" ''
-    # Read the secret securely from the sops-nix decrypted path
-    export GEMINI_API_KEY="$(cat ${config.sops.secrets.gemini_api_key.path})"
-    # Execute the real binary, passing all arguments ("$@") through
-    exec ${gemini-pkg}/bin/gemini "$@"
-  '';
-in
-{
+{ config, pkgs, ... }: {
+
   imports = [
     ./emacs.nix
+    ./gemini.nix
   ];
 
   home.stateVersion = "25.05";
@@ -181,7 +173,9 @@ in
     pkgs.ott
     pkgs.gradle
     pkgs.gnumake
-    gemini-wrapped
+    pkgs.cmake
+    pkgs.libtool
+    pkgs.gcc
   ];
 
   # dconf settings (GNOME only)
