@@ -1,6 +1,15 @@
 # ./home.nix
-{ config, pkgs, ... }: {
-
+{ config, pkgs, ... }:
+let
+  gemini-pkg = pkgs.gemini-cli;
+  gemini-wrapped = pkgs.writeShellScriptBin "gemini" ''
+    # Read the secret securely from the sops-nix decrypted path
+    export GEMINI_API_KEY="$(cat ${config.sops.secrets.gemini_api_key.path})"
+    # Execute the real binary, passing all arguments ("$@") through
+    exec ${gemini-pkg}/bin/gemini "$@"
+  '';
+in
+{
   imports = [
     ./emacs.nix
   ];
@@ -15,143 +24,148 @@
     };
   };
 
-programs.git = {
-  enable = true;
+  programs.git = {
+    enable = true;
 
-  userName = "Alex Cook";
-  userEmail = "a5cook@uwaterloo.ca";
+    userName = "Alex Cook";
+    userEmail = "a5cook@uwaterloo.ca";
 
-  extraConfig = {
-    init.defaultBranch = "main";
-    pull.rebase = true;
-  };
-};
-
-sops = {
-  age.keyFile = "/home/alex/.config/sops/age/keys.txt";
-  defaultSopsFile = ../../secrets/secrets.yaml;
-
-  secrets.github_key = {
-    key = "github_key";
-    mode = "0400";
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+    };
   };
 
-  secrets.rclone_token = {
-    key = "rclone_token";
-    mode = "0400";
+  sops = {
+    age.keyFile = "/home/alex/.config/sops/age/keys.txt";
+    defaultSopsFile = ../../secrets/secrets.yaml;
+
+    secrets.github_key = {
+      key = "github_key";
+      mode = "0400";
+    };
+
+    secrets.rclone_token = {
+      key = "rclone_token";
+      mode = "0400";
+    };
+
+    secrets.rclone_client_id = {
+      key = "rclone_client_id";
+      mode = "0400";
+    };
+
+    secrets.rclone_client_secret = {
+      key = "rclone_client_secret";
+      mode = "0400";
+    };
+
+    secrets.syncthing_password = {
+      key = "syncthing_password";
+      mode = "0400";
+    };
+
+    secrets.gitlab_key = {
+      key = "gitlab_key";
+      mode = "0400";
+    };
+
+    secrets.gemini_api_key = {
+      key = "gemini_api_key";
+      mode = "0400";
+    };
   };
 
-  secrets.rclone_client_id = {
-    key = "rclone_client_id";
-    mode = "0400";
-  };
+  programs.rclone = {
+    enable = true;
+    requiresUnit = "sops-nix.service";
 
-  secrets.rclone_client_secret = {
-    key = "rclone_client_secret";
-    mode = "0400";
-  };
-
-  secrets.syncthing_password = {
-    key = "syncthing_password";
-    mode = "0400";
-  };
-
-  secrets.gitlab_key = {
-    key = "gitlab_key";
-    mode = "0400";
-  };
-};
-
-programs.rclone = {
-  enable = true;
-  requiresUnit = "sops-nix.service";
-
-  remotes = {
-    gdrive = {
-      config = {
-        type = "drive";
-        scope = "drive";
-      };
-      secrets = {
-        client_id = config.sops.secrets.rclone_client_id.path;
-        client_secret = config.sops.secrets.rclone_client_secret.path;
-        token = config.sops.secrets.rclone_token.path;
-      };
-      mounts = {
-        "books" = {
-          enable = true;
-          mountPoint = "${config.home.homeDirectory}/books";
-          options = {
-            vfs-cache-mode = "full";
-            dir-cache-time = "10m";
+    remotes = {
+      gdrive = {
+        config = {
+          type = "drive";
+          scope = "drive";
+        };
+        secrets = {
+          client_id = config.sops.secrets.rclone_client_id.path;
+          client_secret = config.sops.secrets.rclone_client_secret.path;
+          token = config.sops.secrets.rclone_token.path;
+        };
+        mounts = {
+          "books" = {
+            enable = true;
+            mountPoint = "${config.home.homeDirectory}/books";
+            options = {
+              vfs-cache-mode = "full";
+              dir-cache-time = "10m";
+            };
           };
         };
       };
     };
   };
-};
 
-services.syncthing = {
-  enable = true;
+  services.syncthing = {
+    enable = true;
 
-  guiAddress = "127.0.0.1:8384";
-  passwordFile = config.sops.secrets.syncthing_password.path;
+    guiAddress = "127.0.0.1:8384";
+    passwordFile = config.sops.secrets.syncthing_password.path;
 
-  settings = {
-    gui = {
-      user = "alex";
-    };
-
-    folders = {
-      "notes" = {
-        path = "${config.home.homeDirectory}/notes";
-        id = "notes-folder-id";
-        devices = [ "bits" "bytes" ];
+    settings = {
+      gui = {
+        user = "alex";
       };
-      "scratch" = {
-        path = "${config.home.homeDirectory}/scratch";
-        id = "scratch-folder-id";
-        devices = [ "bits" "bytes"];
-      };
-    };
 
-    devices = {
-      "bits" = {
-        id = "TVRTKW2-CBPGPV5-4EPO7NC-FCJNX75-6MVXVFE-LIMCX2C-RL45VIY-POMQHQT";
+      folders = {
+        "notes" = {
+          path = "${config.home.homeDirectory}/notes";
+          id = "notes-folder-id";
+          devices = [ "bits" "bytes" ];
+        };
+        "scratch" = {
+          path = "${config.home.homeDirectory}/scratch";
+          id = "scratch-folder-id";
+          devices = [ "bits" "bytes"];
+        };
       };
-      "bytes" = {
-        id = "LP6IK6T-DVBDKZC-EIZN5SK-STYG7LU-NCDA3I6-APUUPWD-YAQAGID-2N7GFQ6";
+
+      devices = {
+        "bits" = {
+          id = "TVRTKW2-CBPGPV5-4EPO7NC-FCJNX75-6MVXVFE-LIMCX2C-RL45VIY-POMQHQT";
+        };
+        "bytes" = {
+          id = "LP6IK6T-DVBDKZC-EIZN5SK-STYG7LU-NCDA3I6-APUUPWD-YAQAGID-2N7GFQ6";
+        };
       };
     };
   };
-};
 
-programs.ssh = {
-  enable = true;
+  programs.ssh = {
+    enable = true;
 
-  matchBlocks = {
-    "github.com" = {
-      hostname = "github.com";
-      user = "git";
-      identityFile = "${config.sops.secrets.github_key.path}";
-    };
-    "git.uwaterloo.ca" = {
-      hostname = "git.uwaterloo.ca";
-      user = "git";
-      identityFile = "${config.sops.secrets.gitlab_key.path}";
-    };
-  };
-};
-
-programs.direnv = {
-  enable = true;
-  nix-direnv.enable = true;
-  config = {
-    global = {
-      hide_env_diff = true;
+    matchBlocks = {
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "${config.sops.secrets.github_key.path}";
+      };
+      "git.uwaterloo.ca" = {
+        hostname = "git.uwaterloo.ca";
+        user = "git";
+        identityFile = "${config.sops.secrets.gitlab_key.path}";
+      };
     };
   };
-};
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    config = {
+      global = {
+        hide_env_diff = true;
+      };
+    };
+  };
 
   home.packages = [
     pkgs.xournalpp
@@ -167,7 +181,7 @@ programs.direnv = {
     pkgs.ott
     pkgs.gradle
     pkgs.gnumake
-    pkgs.gemini-cli
+    gemini-wrapped
   ];
 
   # dconf settings (GNOME only)
@@ -178,8 +192,8 @@ programs.direnv = {
         xkb-options = [ "ctrl:nocaps" ];
       };
       "org/gnome/desktop/interface" = {
-      enable-hot-corners = false;
-    };
+        enable-hot-corners = false;
+      };
     };
   };
 }
