@@ -12,6 +12,7 @@
 
 ;; load-path
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/project" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/ott" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/cfg" user-emacs-directory))
@@ -421,4 +422,14 @@
   :ensure t
   :config
   (setq vterm-max-scrollback 10000))
+
+;; project-gemini
+(require 'gemini-integration)
+(with-eval-after-load 'project
+  (define-key project-prefix-map (kbd "G") #'my/project-gemini))
+
+;; project-vterm
+(require 'project-vterm)
+(with-eval-after-load 'project
+  (define-key project-prefix-map (kbd "v") #'my/project-vterm))
 
