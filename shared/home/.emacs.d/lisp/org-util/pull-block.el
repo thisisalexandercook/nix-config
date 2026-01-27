@@ -59,7 +59,9 @@
     (insert (format "\n** BLOCK [[id:%s][%s]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"
                     id
                     headline
-                    (format-time-string "[%Y-%m-%d %a %H:%M]")))))
+                    (format-time-string "[%Y-%m-%d %a %H:%M]")))
+
+    (save-buffer)))
 
 (defvar my/just-captured-training-p nil "Flag: Are we in a training capture?")
 (defvar my/last-training-data nil "Storage: (headline . id) from the capture.")
@@ -95,8 +97,10 @@
       (insert (format "\n** BLOCK Training Session: %s [[id:%s][Link]]\n:PROPERTIES:\n:CREATED: %s\n:END:\n"
                       headline id (format-time-string "[%Y-%m-%d %a %H:%M]")))))
 
+
   (setq my/just-captured-training-p nil)
-  (setq my/last-training-data nil))
+  (setq my/last-training-data nil)
+  (save-buffer))
 
 (defvar my/captured-event-time nil "Temporary storage for the event timestamp.")
 
