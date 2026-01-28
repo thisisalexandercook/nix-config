@@ -18,6 +18,7 @@
 
   programs.git = {
     enable = true;
+    lfs.enable = true;
 
     userName = "Alex Cook";
     userEmail = "a5cook@uwaterloo.ca";
