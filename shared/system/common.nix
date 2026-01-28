@@ -133,10 +133,14 @@ services.avahi = {
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Enable tailscale
+  services.tailscale.enable = true;
+
   # Open ports in the firewall.
   networking.firewall = {
     allowedTCPPorts = [ 22000 631 ];
     allowedUDPPorts = [ 22000 21027 631 5353 ];
+    trustedInterfaces = [ "tailscale0" ];
   };
 
   nix.gc = {

@@ -2,7 +2,7 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ./forge.nix ];
 
   networking.hostName = "bytes";
 
@@ -22,6 +22,12 @@
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # Tailscale
+  sops.secrets.tailscale_auth_key = { };
+  services.tailscale = {
+    authKeyFile = config.sops.secrets.tailscale_auth_key.path;
+  };
 
    # SSD permissions
    systemd.tmpfiles.rules = [
