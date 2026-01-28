@@ -176,6 +176,7 @@
     pkgs.cmake
     pkgs.libtool
     pkgs.gcc
+    pkgs.git-lfs
   ];
 
   # dconf settings (GNOME only)
