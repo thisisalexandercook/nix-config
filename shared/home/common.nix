@@ -67,6 +67,11 @@
       key = "gemini_api_key";
       mode = "0400";
     };
+
+    secrets.forgejo_key = {
+      key = "forgejo_key";
+      mode = "0400";
+    };
   };
 
   programs.rclone = {
@@ -147,8 +152,13 @@
         user = "git";
         identityFile = "${config.sops.secrets.gitlab_key.path}";
       };
+        "bytes" = {
+          hostname = "bytes";
+          user = "forgejo";
+          identityFile = "${config.sops.secrets.forgejo_key.path}";
+        };
+      };
     };
-  };
 
   programs.direnv = {
     enable = true;
