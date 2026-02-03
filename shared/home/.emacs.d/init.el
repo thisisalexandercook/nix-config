@@ -105,6 +105,27 @@
   ("C-s" . consult-line)
   ("C-c i" . consult-imenu))
 
+;; embark
+(use-package embark
+  :ensure t
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
+   ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; embark-consult
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 ;; magit
 (use-package magit
   :ensure t)
@@ -432,4 +453,23 @@
 (require 'project-vterm)
 (with-eval-after-load 'project
   (define-key project-prefix-map (kbd "v") #'my/project-vterm))
+
+;; citar
+(use-package citar
+  :ensure t
+  :custom
+  (citar-bibliography '("~/codex/papers/main.bib"))
+  (citar-library-paths '("~/codex/papers/"))
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  :bind
+  (("C-c b" . citar-insert-citation)))
+
+;; citar-embark
+(use-package citar-embark
+  :ensure t
+  :after citar embark
+  :no-require t
+  :config (citar-embark-mode))
 
