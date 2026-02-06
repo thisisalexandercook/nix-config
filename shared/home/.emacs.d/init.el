@@ -181,6 +181,14 @@
   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
   (yas-global-mode 1))
 
+;; flyspell
+(use-package flyspell
+  :ensure nil
+  :hook ((text-mode . flyspell-mode)
+         (prog-mode . flyspell-prog-mode))
+  :config
+  (setq ispell-program-name "aspell"))
+
 ;; denote
 (use-package denote
   :ensure t

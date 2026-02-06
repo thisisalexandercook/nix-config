@@ -188,6 +188,11 @@
     pkgs.libtool
     pkgs.gcc
     pkgs.git-lfs
+    (pkgs.aspellWithDicts (dicts: [
+      dicts.en
+      dicts.en-computers
+      dicts.en-science
+    ]))
   ];
 
   # dconf settings (GNOME only)
