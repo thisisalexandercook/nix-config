@@ -16,6 +16,7 @@
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/ott" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/cfg" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/biblio" user-emacs-directory))
 
 ;; /lisp imports
 (require 'training-calculations)
@@ -480,4 +481,17 @@
   :after citar embark
   :no-require t
   :config (citar-embark-mode))
+
+;; biblio
+(use-package biblio
+  :ensure t
+  :config
+  (require 'biblio-lookup)
+  (setq biblio-synchronous-backends '(dblp crossref arxiv))
+  (setq biblio-bibtex-use-autokey nil)
+  (setq biblio-cleanup-bibtex-function #'my/biblio-cleanup)
+  :bind
+  (:map dired-mode-map
+        ("b" . my/dired-biblio-lookup)))
+
 
