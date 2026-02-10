@@ -2,7 +2,12 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ./forge.nix ];
+  imports = [ ./hardware-configuration.nix ./forge.nix ./forge-backup.nix ];
+
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-label/forge_backup";
+    fsType = "ext4";
+  };
 
   networking.hostName = "bytes";
 

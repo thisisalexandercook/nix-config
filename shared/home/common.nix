@@ -72,6 +72,11 @@
       key = "forgejo_key";
       mode = "0400";
     };
+
+    secrets.forgejo_backup_key = {
+      key = "forgejo_backup_key";
+      mode = "0400";
+    };
   };
 
   programs.rclone = {
@@ -153,12 +158,18 @@
         identityFile = "${config.sops.secrets.gitlab_key.path}";
       };
         "bytes" = {
-          hostname = "bytes";
-          user = "forgejo";
-          identityFile = "${config.sops.secrets.forgejo_key.path}";
-        };
+        hostname = "bytes";
+        user = "forgejo";
+        identityFile = "${config.sops.secrets.forgejo_key.path}";
+      };
+      "bytes-backup" = {
+        hostname = "bytes";
+        port = 2222;
+        user = "forgejo";
+        identityFile = "${config.sops.secrets.forgejo_backup_key.path}";
       };
     };
+  };
 
   programs.direnv = {
     enable = true;

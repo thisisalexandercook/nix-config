@@ -4,22 +4,12 @@
 
   environment.systemPackages = [ pkgs.forgejo ];
 
-  services.forgejo = {
-    enable = true;
-    database.type = "sqlite3";
+  services.forgejo = import ./forge-conf.nix {
     stateDir = "/mnt/data/forgejo";
-
-    lfs.enable = true;
-
-    settings = {
-      server = {
-        DOMAIN = "bytes";
-        HTTP_ADDR = "0.0.0.0";
-        HTTP_PORT = 3000;
-        ROOT_URL = "http://bytes:3000/";
-      };
-      service.DISABLE_REGISTRATION = true;
-    };
+    port = 3000;
+    domain = "bytes";
+    rootUrl = "http://bytes:3000/";
+    extraServerSettings = {};
   };
 
   systemd.services.forgejo.unitConfig.RequiresMountsFor = "/mnt/data";
