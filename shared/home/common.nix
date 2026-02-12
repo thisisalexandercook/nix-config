@@ -4,7 +4,10 @@
   imports = [
     ./emacs.nix
     ./gemini.nix
+    ./wezterm.nix
   ];
+
+  fonts.fontconfig.enable = true;
 
   home.stateVersion = "25.05";
 
@@ -199,6 +202,7 @@
     pkgs.libtool
     pkgs.gcc
     pkgs.git-lfs
+    pkgs.codex
     (pkgs.aspellWithDicts (dicts: [
       dicts.en
       dicts.en-computers
