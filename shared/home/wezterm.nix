@@ -23,9 +23,10 @@
         { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
         { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
         { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
-        { key = 's', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-        { key = 'v', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+        { key = 'v', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+        { key = 's', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
         { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
+        { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
         { key = '[', mods = 'LEADER', action = act.ActivateCopyMode },
 
         -- Standard Terminal Copy/Paste (Ctrl+Shift+C/V)

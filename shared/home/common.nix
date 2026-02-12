@@ -3,6 +3,7 @@
 
   imports = [
     ./emacs.nix
+    ./nvim.nix
     ./gemini.nix
     ./wezterm.nix
   ];
@@ -203,6 +204,7 @@
     pkgs.gcc
     pkgs.git-lfs
     pkgs.codex
+    pkgs.ripgrep
     (pkgs.aspellWithDicts (dicts: [
       dicts.en
       dicts.en-computers
