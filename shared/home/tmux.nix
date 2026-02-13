@@ -1,6 +1,9 @@
 { pkgs, ... }:
 
 let
+  tmuxPalette = import ./tmux-modus-operandi-palette.nix;
+  colors = tmuxPalette.colors;
+
   proj = pkgs.writeShellScriptBin "proj" ''
     set -euo pipefail
 
@@ -110,26 +113,53 @@ in
     baseIndex = 1;
 
     extraConfig = ''
+      set -g status-position top
       set -g renumber-windows on
+      set -g status-justify centre
+      set -g status-style "bg=${colors.bgStatusLineActive},fg=${colors.fgStatusLineActive}"
+      set -g status-left-length 40
+      set -g status-right-length 80
+      set -g status-left "#[bold]#{session_name}#[nobold] | #H "
+      set -g status-right "#{pane_current_path} "
+      set -g window-status-format " #I:#W "
+      set -g window-status-current-format " #I:#W "
+      set -g window-status-current-style "fg=#ffffff,bg=${colors.blueFaint},bold"
+      set -g window-status-style "fg=${colors.fgStatusLineInactive},bg=default,nobold"
 
-      bind | split-window -h
-      bind - split-window -v
-      bind v split-window -h
-      bind s split-window -v
+      bind-key -N "cfg: split pane horizontally (prefix |)" | split-window -h
+      bind-key -N "cfg: split pane vertically (prefix -)" - split-window -v
+      bind-key -N "cfg: split pane horizontally (prefix v)" v split-window -h
+      bind-key -N "cfg: split pane vertically (prefix s)" s split-window -v
 
       # Seamless pane navigation with Neovim splits.
       is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\S+\/)?g?(view|l?n?vim?x?)(diff)?$'"
-      bind-key -n M-v if-shell "$is_vim" "send-keys M-v" "split-window -h"
-      bind-key -n M-s if-shell "$is_vim" "send-keys M-s" "split-window -v"
-      bind-key -n M-q if-shell "$is_vim" "send-keys M-q" "kill-pane"
-      bind-key -n M-n switch-client -n
-      bind-key -n M-p switch-client -p
-      bind-key -n M-S choose-tree -s
-      bind-key -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
-      bind-key -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
-      bind-key -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
-      bind-key -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
-      bind-key -n C-\\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
+      bind-key -N "cfg: split pane horizontally (Alt+v)" -n M-v if-shell "$is_vim" "send-keys M-v" "split-window -h"
+      bind-key -N "cfg: split pane vertically (Alt+s)" -n M-s if-shell "$is_vim" "send-keys M-s" "split-window -v"
+      bind-key -N "cfg: close pane (Alt+q)" -n M-q if-shell "$is_vim" "send-keys M-q" "kill-pane"
+      bind-key -N "cfg: enter copy mode (Alt+c)" -n M-c copy-mode
+      bind-key -N "cfg: show key help popup (Alt+/)" -n M-/ display-popup -E "sh -lc 'printf \"tmux key help (live)\\n\\nNo prefix\\n\"; tmux list-keys -N -T root | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPrefix (Ctrl+Space)\\n\"; tmux list-keys -N -T prefix | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPress any key to close...\"; read -r -n 1 -s _'"
+      # Fast window cycling within the current project/session.
+      bind-key -N "cfg: next window (Alt+n)" -n M-n next-window
+      bind-key -N "cfg: previous window (Alt+p)" -n M-p previous-window
+      bind-key -N "cfg: jump to window 1 (Alt+1)" -n M-1 select-window -t:=1
+      bind-key -N "cfg: jump to window 2 (Alt+2)" -n M-2 select-window -t:=2
+      bind-key -N "cfg: jump to window 3 (Alt+3)" -n M-3 select-window -t:=3
+      bind-key -N "cfg: jump to window 4 (Alt+4)" -n M-4 select-window -t:=4
+      bind-key -N "cfg: jump to window 5 (Alt+5)" -n M-5 select-window -t:=5
+      bind-key -N "cfg: jump to window 6 (Alt+6)" -n M-6 select-window -t:=6
+      bind-key -N "cfg: jump to window 7 (Alt+7)" -n M-7 select-window -t:=7
+      bind-key -N "cfg: jump to window 8 (Alt+8)" -n M-8 select-window -t:=8
+      bind-key -N "cfg: jump to window 9 (Alt+9)" -n M-9 select-window -t:=9
+      bind-key -N "cfg: jump to window 10 (Alt+0)" -n M-0 select-window -t:=10
+      # Session cycling across projects.
+      bind-key -N "cfg: next session/project (Alt+Shift+n)" -n M-N switch-client -n
+      bind-key -N "cfg: previous session/project (Alt+Shift+p)" -n M-P switch-client -p
+      bind-key -N "cfg: choose session tree (Alt+Shift+s)" -n M-S choose-tree -s
+      bind-key -N "cfg: move to left pane (Ctrl+h)" -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
+      bind-key -N "cfg: move to lower pane (Ctrl+j)" -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
+      bind-key -N "cfg: move to upper pane (Ctrl+k)" -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
+      bind-key -N "cfg: move to right pane (Ctrl+l)" -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
+      bind-key -N "cfg: move to last pane (Ctrl+\\)" -n C-\\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
     '';
   };
 

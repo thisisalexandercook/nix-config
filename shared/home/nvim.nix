@@ -11,15 +11,23 @@
     vimAlias = true;
     defaultEditor = false; # keep Emacs as $EDITOR while we ramp up
 
-      globals.mapleader = " ";
+      globals = {
+        mapleader = " ";
+        loaded_netrw = 1;
+        loaded_netrwPlugin = 1;
+      };
 
     opts = {
       number = true;
       relativenumber = true;
       shiftwidth = 2;
       tabstop = 2;
+      showtabline = 0;
       expandtab = true;
       smartindent = true;
+      breakindent = true;
+      breakindentopt = "shift:2,sbr";
+      linebreak = true;
       clipboard = "unnamedplus";
       background = "light";
       autoread = true;
@@ -27,11 +35,71 @@
 
     extraPlugins = with pkgs.vimPlugins; [
       modus-themes-nvim
+      which-key-nvim
+      oil-nvim
       vim-tmux-navigator
+      tiny-glimmer-nvim
     ];
 
     extraConfigLua = ''
       vim.cmd.colorscheme("modus_operandi")
+      require("which-key").setup({})
+      _G.oil_winbar = function()
+        local ok, oil = pcall(require, "oil")
+        if not ok then
+          return ""
+        end
+        local dir = oil.get_current_dir()
+        if not dir then
+          return ""
+        end
+        return vim.fn.fnamemodify(dir, ":~")
+      end
+      require("oil").setup({
+        default_file_explorer = true,
+        win_options = {
+          winbar = "%{v:lua.oil_winbar()}",
+          winhighlight = "WinBar:Normal,WinBarNC:Normal",
+        },
+      })
+      require("lualine").setup({
+        options = {
+          section_separators = { left = "|", right = "|" },
+          component_separators = { left = "|", right = "|" },
+        },
+      })
+      require("tiny-glimmer").setup({
+        overwrite = {
+          auto_map = true,
+          yank = {
+            enabled = true,
+            default_animation = "pulse",
+          },
+          paste = {
+            enabled = false,
+          },
+          search = {
+            enabled = false,
+          },
+          undo = {
+            enabled = false,
+          },
+          redo = {
+            enabled = false,
+          },
+        },
+        animations = {
+          pulse = {
+            from_color = "Visual",
+            to_color = "Normal",
+            pulse_count = 1,
+            intensity = 1.06,
+            chars_for_max_duration = 30,
+            min_duration = 320,
+            max_duration = 620,
+          },
+        },
+      })
 
       -- Refresh buffers changed on disk on focus/idle events.
       -- checktime does not overwrite unsaved edits.
@@ -47,17 +115,6 @@
         end,
       })
 
-      -- Keep Neogit status fresh when returning focus or idling in that buffer.
-      vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
-        callback = function(args)
-          local ft = vim.bo[args.buf].filetype
-          if ft == "NeogitStatus" then
-            pcall(function()
-              require("neogit").refresh()
-            end)
-          end
-        end,
-      })
     '';
 
     keymaps = [
@@ -75,6 +132,18 @@
     }
     {
       mode = "n";
+      key = "<leader>e";
+      action = "<cmd>Oil --float<cr>";
+      options = { desc = "Open explorer"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>fb";
+      action = "<cmd>Telescope buffers<cr>";
+      options = { desc = "Find buffer"; };
+    }
+    {
+      mode = "n";
       key = "<leader>fg";
       action = "<cmd>Telescope live_grep<cr>";
       options = { desc = "Live grep"; };
@@ -88,7 +157,7 @@
     {
       mode = "n";
       key = "<leader>gR";
-      action = "<cmd>lua require('neogit').refresh()<cr>";
+      action = "<cmd>lua pcall(function() require('neogit').refresh() end)<cr>";
       options = { desc = "Refresh Neogit"; };
     }
     {
@@ -142,13 +211,13 @@
 
       neogit = {
         enable = true;
-        kind = "replace";
+        kind = "split";
         disableHints = false;
         settings = {
-          auto_close = true;
-          auto_refresh = true;
+          auto_close = false;
+          auto_refresh = false;
           filewatcher = {
-            enabled = true;
+            enabled = false;
           };
           remember_settings = false;
           use_per_project_settings = false;
