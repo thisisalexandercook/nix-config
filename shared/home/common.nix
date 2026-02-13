@@ -5,6 +5,7 @@
     ./codex.nix
     ./emacs.nix
     ./nvim.nix
+    ./projects.nix
     ./tmux.nix
     ./gemini.nix
     ./wezterm.nix

@@ -22,6 +22,7 @@
       smartindent = true;
       clipboard = "unnamedplus";
       background = "light";
+      autoread = true;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
@@ -31,6 +32,32 @@
 
     extraConfigLua = ''
       vim.cmd.colorscheme("modus_operandi")
+
+      -- Refresh buffers changed on disk on focus/idle events.
+      -- checktime does not overwrite unsaved edits.
+      vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+        pattern = "*",
+        command = "checktime",
+      })
+
+      vim.api.nvim_create_autocmd("FileChangedShellPost", {
+        pattern = "*",
+        callback = function()
+          vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.INFO)
+        end,
+      })
+
+      -- Keep Neogit status fresh when returning focus or idling in that buffer.
+      vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+        callback = function(args)
+          local ft = vim.bo[args.buf].filetype
+          if ft == "NeogitStatus" then
+            pcall(function()
+              require("neogit").refresh()
+            end)
+          end
+        end,
+      })
     '';
 
     keymaps = [
@@ -57,6 +84,12 @@
       key = "<leader>gs";
       action = "<cmd>Neogit<cr>";
       options = { desc = "Git status"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>gR";
+      action = "<cmd>lua require('neogit').refresh()<cr>";
+      options = { desc = "Refresh Neogit"; };
     }
     {
       mode = "n";
@@ -113,6 +146,10 @@
         disableHints = false;
         settings = {
           auto_close = true;
+          auto_refresh = true;
+          filewatcher = {
+            enabled = true;
+          };
           remember_settings = false;
           use_per_project_settings = false;
         };
