@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   imports = [
@@ -21,9 +21,17 @@
       expandtab = true;
       smartindent = true;
       clipboard = "unnamedplus";
+      background = "light";
     };
 
-    colorschemes.tokyonight.enable = true;
+    extraPlugins = with pkgs.vimPlugins; [
+      modus-themes-nvim
+      vim-tmux-navigator
+    ];
+
+    extraConfigLua = ''
+      vim.cmd.colorscheme("modus_operandi")
+    '';
 
     keymaps = [
     {
@@ -49,6 +57,36 @@
       key = "<leader>gs";
       action = "<cmd>Neogit<cr>";
       options = { desc = "Git status"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>v";
+      action = "<cmd>vsplit<cr>";
+      options = { desc = "Vertical split"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>s";
+      action = "<cmd>split<cr>";
+      options = { desc = "Horizontal split"; };
+    }
+    {
+      mode = "n";
+      key = "<A-v>";
+      action = "<cmd>vsplit<cr>";
+      options = { desc = "Vertical split (Alt+v)"; };
+    }
+    {
+      mode = "n";
+      key = "<A-s>";
+      action = "<cmd>split<cr>";
+      options = { desc = "Horizontal split (Alt+s)"; };
+    }
+    {
+      mode = "n";
+      key = "<A-q>";
+      action = "<cmd>close<cr>";
+      options = { desc = "Close split (Alt+q)"; };
     }
     ];
 

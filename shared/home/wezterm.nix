@@ -9,26 +9,23 @@
       local act = wezterm.action
 
       -- Appearance
-      config.color_scheme = 'Tomorrow Night Bright'
-      config.font = wezterm.font 'Aporetic Sans Mono'
+      config.color_scheme = 'Modus-Operandi'
+      config.font = wezterm.font 'IBM Plex Mono'
       config.font_size = 13.0
       config.window_background_opacity = 1.0
       config.hide_tab_bar_if_only_one_tab = true
+      config.notification_handling = 'NeverShow'
+      config.audible_bell = 'Disabled'
+      config.visual_bell = {
+        fade_in_duration_ms = 0,
+        fade_out_duration_ms = 0,
+      }
+
+      -- Start directly in tmux so pane/session management is unified.
+      config.default_prog = { 'tmux', 'new-session', '-A', '-s', 'main' }
 
       -- Keybindings
-      config.leader = { key = 'Space', mods = 'CTRL', timeout_milliseconds = 1000 }
       config.keys = {
-        -- Vim-style pane management with a CTRL+Space leader
-        { key = 'h', mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
-        { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
-        { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
-        { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
-        { key = 'v', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-        { key = 's', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
-        { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
-        { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
-        { key = '[', mods = 'LEADER', action = act.ActivateCopyMode },
-
         -- Standard Terminal Copy/Paste (Ctrl+Shift+C/V)
         { key = 'C', mods = 'CTRL|SHIFT', action = act.CopyTo 'Clipboard' },
         { key = 'V', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },

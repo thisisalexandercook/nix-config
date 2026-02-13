@@ -1,9 +1,11 @@
 # ./home.nix
-{ config, pkgs, ... }: {
+{ config, pkgs, inputs, ... }: {
 
   imports = [
+    ./codex.nix
     ./emacs.nix
     ./nvim.nix
+    ./tmux.nix
     ./gemini.nix
     ./wezterm.nix
   ];
@@ -193,6 +195,7 @@
     pkgs.unzip
     pkgs.direnv
     pkgs.nix-direnv
+    pkgs.ibm-plex
     pkgs.aporetic
     pkgs.jdk21
     pkgs.texlive.combined.scheme-full
@@ -202,8 +205,9 @@
     pkgs.cmake
     pkgs.libtool
     pkgs.gcc
+    pkgs.tmux
     pkgs.git-lfs
-    pkgs.codex
+    inputs.codex-cli-nix.packages.${pkgs.system}.default
     pkgs.ripgrep
     (pkgs.aspellWithDicts (dicts: [
       dicts.en
@@ -224,4 +228,5 @@
       };
     };
   };
+
 }
