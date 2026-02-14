@@ -96,13 +96,6 @@
           winhighlight = "WinBar:Normal,WinBarNC:Normal",
         },
       })
-      require("telescope").setup({
-        pickers = {
-          find_files = {
-            hidden = true,
-          },
-        },
-      })
       require("lualine").setup({
         options = {
           section_separators = { left = "|", right = "|" },
@@ -292,7 +285,16 @@
 
       telescope = {
         enable = true;
-        extensions.projects.enable = true;
+        extensions = {
+          projects.enable = true;
+        };
+        settings = {
+          pickers = {
+            find_files = {
+              hidden = true;
+            };
+          };
+        };
       };
 
       project-nvim = {
