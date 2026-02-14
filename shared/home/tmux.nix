@@ -90,7 +90,7 @@ let
     tmux new-session -d -s "$session_name" -n main -c "$project_root"
     tmux send-keys -t "$session_name:main" "nvim ." C-m
     tmux new-window -t "$session_name:" -n sandbox -c "$project_root"
-    tmux split-window -h -t "$session_name:sandbox" -c "$project_root" "nvim '+Neogit'"
+    tmux split-window -h -t "$session_name:sandbox" -c "$project_root" "nvim '+Git' '+wincmd ='"
     tmux select-pane -t "$session_name:sandbox" -L
     tmux select-window -t "$session_name:main"
 

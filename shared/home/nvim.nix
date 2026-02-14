@@ -43,6 +43,37 @@
 
     extraConfigLua = ''
       vim.cmd.colorscheme("modus_operandi")
+      local function apply_gitsigns_highlights()
+        local set = vim.api.nvim_set_hl
+        local unstaged = {
+          add = "#1f7a4c",
+          change = "#875f00",
+          delete = "#a02020",
+        }
+        local staged = {
+          add = "#4f7a62",
+          change = "#8a7a4a",
+          delete = "#8a5a5a",
+        }
+
+        set(0, "GitSignsAdd", { fg = unstaged.add, bg = "NONE" })
+        set(0, "GitSignsChange", { fg = unstaged.change, bg = "NONE" })
+        set(0, "GitSignsDelete", { fg = unstaged.delete, bg = "NONE" })
+        set(0, "GitSignsTopdelete", { fg = unstaged.delete, bg = "NONE" })
+        set(0, "GitSignsChangedelete", { fg = unstaged.change, bg = "NONE" })
+        set(0, "GitSignsUntracked", { fg = unstaged.add, bg = "NONE" })
+
+        set(0, "GitSignsStagedAdd", { fg = staged.add, bg = "NONE" })
+        set(0, "GitSignsStagedChange", { fg = staged.change, bg = "NONE" })
+        set(0, "GitSignsStagedDelete", { fg = staged.delete, bg = "NONE" })
+        set(0, "GitSignsStagedTopdelete", { fg = staged.delete, bg = "NONE" })
+        set(0, "GitSignsStagedChangedelete", { fg = staged.change, bg = "NONE" })
+        set(0, "GitSignsStagedUntracked", { fg = staged.add, bg = "NONE" })
+      end
+      apply_gitsigns_highlights()
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        callback = apply_gitsigns_highlights,
+      })
       require("which-key").setup({})
       _G.oil_winbar = function()
         local ok, oil = pcall(require, "oil")
@@ -57,9 +88,19 @@
       end
       require("oil").setup({
         default_file_explorer = true,
+        view_options = {
+          show_hidden = true,
+        },
         win_options = {
           winbar = "%{v:lua.oil_winbar()}",
           winhighlight = "WinBar:Normal,WinBarNC:Normal",
+        },
+      })
+      require("telescope").setup({
+        pickers = {
+          find_files = {
+            hidden = true,
+          },
         },
       })
       require("lualine").setup({
@@ -115,6 +156,43 @@
         end,
       })
 
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "fugitive",
+        callback = function(args)
+          vim.bo[args.buf].buflisted = false
+          vim.schedule(function()
+            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+              pcall(vim.api.nvim_set_option_value, "winfixheight", false, { win = win })
+              pcall(vim.api.nvim_set_option_value, "winfixwidth", false, { win = win })
+            end
+            vim.cmd("wincmd =")
+          end)
+          vim.keymap.set("n", "R", "<cmd>edit<cr>", {
+            buffer = args.buf,
+            silent = true,
+            desc = "Refresh Fugitive buffer",
+          })
+        end,
+      })
+
+      -- Open PDFs externally in Zathura instead of editing binary content.
+      vim.api.nvim_create_autocmd("BufReadPost", {
+        pattern = "*.pdf",
+        callback = function(args)
+          local file = vim.api.nvim_buf_get_name(args.buf)
+          if file == "" then
+            return
+          end
+
+          vim.fn.jobstart({ "zathura", file }, { detach = true })
+          vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(args.buf) then
+              vim.api.nvim_buf_delete(args.buf, { force = true })
+            end
+          end)
+        end,
+      })
+
     '';
 
     keymaps = [
@@ -133,8 +211,8 @@
     {
       mode = "n";
       key = "<leader>e";
-      action = "<cmd>Oil --float<cr>";
-      options = { desc = "Open explorer"; };
+      action = "<cmd>Oil<cr>";
+      options = { desc = "Open explorer buffer"; };
     }
     {
       mode = "n";
@@ -159,6 +237,18 @@
       key = "<leader>gR";
       action = "<cmd>lua pcall(function() require('neogit').refresh() end)<cr>";
       options = { desc = "Refresh Neogit"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>gS";
+      action = "<cmd>Git<cr>";
+      options = { desc = "Fugitive status"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>gl";
+      action = "<cmd>Git log --graph --oneline --decorate --all<cr>";
+      options = { desc = "Git log graph"; };
     }
     {
       mode = "n";
@@ -193,7 +283,10 @@
     ];
 
     plugins = {
-      gitsigns.enable = true;
+      gitsigns = {
+        enable = true;
+      };
+      fugitive.enable = true;
       lualine.enable = true;
       treesitter.enable = true;
 

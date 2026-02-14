@@ -188,8 +188,49 @@
     };
   };
 
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "application/x-pdf" = [ "org.pwmt.zathura.desktop" ];
+      "application/acrobat" = [ "org.pwmt.zathura.desktop" ];
+      "applications/vnd.pdf" = [ "org.pwmt.zathura.desktop" ];
+      "text/pdf" = [ "org.pwmt.zathura.desktop" ];
+      "text/x-pdf" = [ "org.pwmt.zathura.desktop" ];
+    };
+  };
+
+  xdg.configFile."zathura/zathurarc".text = ''
+    # Modus Operandi-aligned light palette
+    set default-bg              "#ffffff"
+    set default-fg              "#000000"
+    set guioptions              ""
+    set statusbar-bg            "#c8c8c8"
+    set statusbar-fg            "#0a0a0a"
+    set inputbar-bg             "#f2f2f2"
+    set inputbar-fg             "#000000"
+    set notification-bg         "#f2f2f2"
+    set notification-fg         "#000000"
+    set notification-error-bg   "#f2f2f2"
+    set notification-error-fg   "#a60000"
+    set notification-warning-bg "#f2f2f2"
+    set notification-warning-fg "#813e00"
+    set highlight-color         "rgba(0,52,151,0.35)"
+    set highlight-fg            "rgba(255,255,255,0.85)"
+    set completion-bg           "#e6e6e6"
+    set completion-fg           "#000000"
+    set completion-highlight-bg "#003497"
+    set completion-highlight-fg "#ffffff"
+    set recolor-lightcolor      "#ffffff"
+    set recolor-darkcolor       "#000000"
+    set selection-clipboard     "clipboard"
+    map y exec "xclip -o -selection primary | xclip -i -selection clipboard"
+  '';
+
   home.packages = [
     pkgs.xournalpp
+    pkgs.zathura
+    pkgs.xclip
     pkgs.python3
     pkgs.rclone
     pkgs.syncthing
