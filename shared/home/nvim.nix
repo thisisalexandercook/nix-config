@@ -96,12 +96,6 @@
           winhighlight = "WinBar:Normal,WinBarNC:Normal",
         },
       })
-      require("lualine").setup({
-        options = {
-          section_separators = { left = "|", right = "|" },
-          component_separators = { left = "|", right = "|" },
-        },
-      })
       require("tiny-glimmer").setup({
         overwrite = {
           auto_map = true,
@@ -280,7 +274,21 @@
         enable = true;
       };
       fugitive.enable = true;
-      lualine.enable = true;
+      lualine = {
+        enable = true;
+        settings = {
+          options = {
+            section_separators = {
+              left = "|";
+              right = "|";
+            };
+            component_separators = {
+              left = "|";
+              right = "|";
+            };
+          };
+        };
+      };
       treesitter.enable = true;
 
       telescope = {
