@@ -36,6 +36,15 @@
       updatetime = 500;
     };
 
+    autoCmd = [
+      {
+        event = [ "BufReadPost" ];
+        pattern = "*.pdf";
+        desc = "Open PDFs externally in Zathura";
+        command = "lua require('config.zathura').open_current_pdf()";
+      }
+    ];
+
     extraPlugins = with pkgs.vimPlugins; [
       modus-themes-nvim
       which-key-nvim
@@ -48,24 +57,6 @@
       require("config.oil").setup()
       require("config.auto-refresh").setup()
       require("which-key").setup({})
-
-      -- Open PDFs externally in Zathura instead of editing binary content.
-      vim.api.nvim_create_autocmd("BufReadPost", {
-        pattern = "*.pdf",
-        callback = function(args)
-          local file = vim.api.nvim_buf_get_name(args.buf)
-          if file == "" then
-            return
-          end
-
-          vim.fn.jobstart({ "zathura", file }, { detach = true })
-          vim.schedule(function()
-            if vim.api.nvim_buf_is_valid(args.buf) then
-              vim.api.nvim_buf_delete(args.buf, { force = true })
-            end
-          end)
-        end,
-      })
 
     '';
 
