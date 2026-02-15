@@ -33,6 +33,7 @@
       clipboard = "unnamedplus";
       background = "light";
       autoread = true;
+      updatetime = 500;
     };
 
     extraPlugins = with pkgs.vimPlugins; [
@@ -45,21 +46,8 @@
       vim.cmd.colorscheme("modus_operandi")
       require("config.gitsigns").setup()
       require("config.oil").setup()
+      require("config.auto-refresh").setup()
       require("which-key").setup({})
-
-      -- Refresh buffers changed on disk on focus/idle events.
-      -- checktime does not overwrite unsaved edits.
-      vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
-        pattern = "*",
-        command = "checktime",
-      })
-
-      vim.api.nvim_create_autocmd("FileChangedShellPost", {
-        pattern = "*",
-        callback = function()
-          vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.INFO)
-        end,
-      })
 
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "fugitive",
