@@ -39,7 +39,6 @@
       modus-themes-nvim
       which-key-nvim
       vim-tmux-navigator
-      tiny-glimmer-nvim
     ];
 
     extraConfigLua = ''
@@ -47,38 +46,6 @@
       require("config.gitsigns").setup()
       require("config.oil").setup()
       require("which-key").setup({})
-      require("tiny-glimmer").setup({
-        overwrite = {
-          auto_map = true,
-          yank = {
-            enabled = true,
-            default_animation = "pulse",
-          },
-          paste = {
-            enabled = false,
-          },
-          search = {
-            enabled = false,
-          },
-          undo = {
-            enabled = false,
-          },
-          redo = {
-            enabled = false,
-          },
-        },
-        animations = {
-          pulse = {
-            from_color = "Visual",
-            to_color = "Normal",
-            pulse_count = 1,
-            intensity = 1.06,
-            chars_for_max_duration = 30,
-            min_duration = 320,
-            max_duration = 620,
-          },
-        },
-      })
 
       -- Refresh buffers changed on disk on focus/idle events.
       -- checktime does not overwrite unsaved edits.
@@ -266,6 +233,41 @@
           win_options = {
             winbar = "%{v:lua.oil_winbar()}";
             winhighlight = "WinBar:Normal,WinBarNC:Normal";
+          };
+        };
+      };
+      tiny-glimmer = {
+        enable = true;
+        settings = {
+          overwrite = {
+            auto_map = true;
+            yank = {
+              enabled = true;
+              default_animation = "pulse";
+            };
+            paste = {
+              enabled = false;
+            };
+            search = {
+              enabled = false;
+            };
+            undo = {
+              enabled = false;
+            };
+            redo = {
+              enabled = false;
+            };
+          };
+          animations = {
+            pulse = {
+              from_color = "Visual";
+              to_color = "Normal";
+              pulse_count = 1;
+              intensity = 1.06;
+              chars_for_max_duration = 30;
+              min_duration = 320;
+              max_duration = 620;
+            };
           };
         };
       };
