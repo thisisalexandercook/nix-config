@@ -136,6 +136,10 @@ in
       bind-key -N "cfg: split pane horizontally (Alt+v)" -n M-v if-shell "$is_vim" "send-keys M-v" "split-window -h"
       bind-key -N "cfg: split pane vertically (Alt+s)" -n M-s if-shell "$is_vim" "send-keys M-s" "split-window -v"
       bind-key -N "cfg: close pane (Alt+q)" -n M-q if-shell "$is_vim" "send-keys M-q" "kill-pane"
+      bind-key -N "cfg: resize pane left (Alt+Shift+h)" -n M-H if-shell "$is_vim" "send-keys M-H" "resize-pane -L 5"
+      bind-key -N "cfg: resize pane down (Alt+Shift+j)" -n M-J if-shell "$is_vim" "send-keys M-J" "resize-pane -D 3"
+      bind-key -N "cfg: resize pane up (Alt+Shift+k)" -n M-K if-shell "$is_vim" "send-keys M-K" "resize-pane -U 3"
+      bind-key -N "cfg: resize pane right (Alt+Shift+l)" -n M-L if-shell "$is_vim" "send-keys M-L" "resize-pane -R 5"
       bind-key -N "cfg: enter copy mode (Alt+c)" -n M-c copy-mode
       bind-key -N "cfg: show key help popup (Alt+/)" -n M-/ display-popup -E "sh -lc 'printf \"tmux key help (live)\\n\\nNo prefix\\n\"; tmux list-keys -N -T root | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPrefix (Ctrl+Space)\\n\"; tmux list-keys -N -T prefix | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPress any key to close...\"; read -r -n 1 -s _'"
       # Fast window cycling within the current project/session.
