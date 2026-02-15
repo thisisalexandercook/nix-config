@@ -53,13 +53,6 @@
         pattern = "fugitive",
         callback = function(args)
           vim.bo[args.buf].buflisted = false
-          vim.schedule(function()
-            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-              pcall(vim.api.nvim_set_option_value, "winfixheight", false, { win = win })
-              pcall(vim.api.nvim_set_option_value, "winfixwidth", false, { win = win })
-            end
-            vim.cmd("wincmd =")
-          end)
           vim.keymap.set("n", "R", "<cmd>edit<cr>", {
             buffer = args.buf,
             silent = true,
@@ -118,6 +111,12 @@
       key = "<leader>fg";
       action = "<cmd>Telescope live_grep<cr>";
       options = { desc = "Live grep"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>ur";
+      action = "<cmd>lua require('config.refresh').run()<cr>";
+      options = { desc = "Refresh current buffer"; };
     }
     {
       mode = "n";
