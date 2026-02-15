@@ -1,6 +1,8 @@
 { inputs, pkgs, ... }:
 
 {
+  xdg.configFile."nvim/lua/config".source = ./nvim/lua/config;
+
   imports = [
     inputs.nixvim.homeManagerModules.nixvim
   ];
@@ -43,37 +45,7 @@
 
     extraConfigLua = ''
       vim.cmd.colorscheme("modus_operandi")
-      local function apply_gitsigns_highlights()
-        local set = vim.api.nvim_set_hl
-        local unstaged = {
-          add = "#1f7a4c",
-          change = "#875f00",
-          delete = "#a02020",
-        }
-        local staged = {
-          add = "#4f7a62",
-          change = "#8a7a4a",
-          delete = "#8a5a5a",
-        }
-
-        set(0, "GitSignsAdd", { fg = unstaged.add, bg = "NONE" })
-        set(0, "GitSignsChange", { fg = unstaged.change, bg = "NONE" })
-        set(0, "GitSignsDelete", { fg = unstaged.delete, bg = "NONE" })
-        set(0, "GitSignsTopdelete", { fg = unstaged.delete, bg = "NONE" })
-        set(0, "GitSignsChangedelete", { fg = unstaged.change, bg = "NONE" })
-        set(0, "GitSignsUntracked", { fg = unstaged.add, bg = "NONE" })
-
-        set(0, "GitSignsStagedAdd", { fg = staged.add, bg = "NONE" })
-        set(0, "GitSignsStagedChange", { fg = staged.change, bg = "NONE" })
-        set(0, "GitSignsStagedDelete", { fg = staged.delete, bg = "NONE" })
-        set(0, "GitSignsStagedTopdelete", { fg = staged.delete, bg = "NONE" })
-        set(0, "GitSignsStagedChangedelete", { fg = staged.change, bg = "NONE" })
-        set(0, "GitSignsStagedUntracked", { fg = staged.add, bg = "NONE" })
-      end
-      apply_gitsigns_highlights()
-      vim.api.nvim_create_autocmd("ColorScheme", {
-        callback = apply_gitsigns_highlights,
-      })
+      require("config.gitsigns").setup()
       require("which-key").setup({})
       _G.oil_winbar = function()
         local ok, oil = pcall(require, "oil")
@@ -272,6 +244,13 @@
     plugins = {
       gitsigns = {
         enable = true;
+        settings = {
+          signcolumn = true;
+          numhl = false;
+          linehl = false;
+          word_diff = false;
+          current_line_blame = false;
+        };
       };
       fugitive.enable = true;
       lualine = {
