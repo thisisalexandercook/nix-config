@@ -49,18 +49,6 @@
       require("config.auto-refresh").setup()
       require("which-key").setup({})
 
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "fugitive",
-        callback = function(args)
-          vim.bo[args.buf].buflisted = false
-          vim.keymap.set("n", "R", "<cmd>edit<cr>", {
-            buffer = args.buf,
-            silent = true,
-            desc = "Refresh Fugitive buffer",
-          })
-        end,
-      })
-
       -- Open PDFs externally in Zathura instead of editing binary content.
       vim.api.nvim_create_autocmd("BufReadPost", {
         pattern = "*.pdf",
