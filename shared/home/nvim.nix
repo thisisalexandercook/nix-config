@@ -38,7 +38,6 @@
     extraPlugins = with pkgs.vimPlugins; [
       modus-themes-nvim
       which-key-nvim
-      oil-nvim
       vim-tmux-navigator
       tiny-glimmer-nvim
     ];
@@ -46,28 +45,8 @@
     extraConfigLua = ''
       vim.cmd.colorscheme("modus_operandi")
       require("config.gitsigns").setup()
+      require("config.oil").setup()
       require("which-key").setup({})
-      _G.oil_winbar = function()
-        local ok, oil = pcall(require, "oil")
-        if not ok then
-          return ""
-        end
-        local dir = oil.get_current_dir()
-        if not dir then
-          return ""
-        end
-        return vim.fn.fnamemodify(dir, ":~")
-      end
-      require("oil").setup({
-        default_file_explorer = true,
-        view_options = {
-          show_hidden = true,
-        },
-        win_options = {
-          winbar = "%{v:lua.oil_winbar()}",
-          winhighlight = "WinBar:Normal,WinBarNC:Normal",
-        },
-      })
       require("tiny-glimmer").setup({
         overwrite = {
           auto_map = true,
@@ -239,6 +218,30 @@
       action = "<cmd>close<cr>";
       options = { desc = "Close split (Alt+q)"; };
     }
+    {
+      mode = "n";
+      key = "<A-H>";
+      action = "<cmd>vertical resize -5<cr>";
+      options = { desc = "Resize split left (Alt+Shift+h)"; };
+    }
+    {
+      mode = "n";
+      key = "<A-L>";
+      action = "<cmd>vertical resize +5<cr>";
+      options = { desc = "Resize split right (Alt+Shift+l)"; };
+    }
+    {
+      mode = "n";
+      key = "<A-K>";
+      action = "<cmd>resize +3<cr>";
+      options = { desc = "Resize split up (Alt+Shift+k)"; };
+    }
+    {
+      mode = "n";
+      key = "<A-J>";
+      action = "<cmd>resize -3<cr>";
+      options = { desc = "Resize split down (Alt+Shift+j)"; };
+    }
     ];
 
     plugins = {
@@ -253,6 +256,19 @@
         };
       };
       fugitive.enable = true;
+      oil = {
+        enable = true;
+        settings = {
+          default_file_explorer = true;
+          view_options = {
+            show_hidden = true;
+          };
+          win_options = {
+            winbar = "%{v:lua.oil_winbar()}";
+            winhighlight = "WinBar:Normal,WinBarNC:Normal";
+          };
+        };
+      };
       lualine = {
         enable = true;
         settings = {
