@@ -40,8 +40,8 @@
       {
         event = [ "BufReadPost" ];
         pattern = "*.pdf";
-        desc = "Open PDFs externally in Zathura";
-        command = "lua require('config.zathura').open_current_pdf()";
+        desc = "Open PDFs with selected viewer";
+        command = "lua require('config.pdf').open_current_pdf()";
       }
     ];
 

@@ -230,6 +230,7 @@
   home.packages = [
     pkgs.xournalpp
     pkgs.zathura
+    pkgs.tdf
     pkgs.xclip
     pkgs.python3
     pkgs.rclone
