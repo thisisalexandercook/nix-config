@@ -76,9 +76,33 @@
     }
     {
       mode = "n";
+      key = "<leader>fd";
+      action = "<cmd>lua require('config.oil').find_directory_with_telescope()<cr>";
+      options = { desc = "Find directory in Oil"; };
+    }
+    {
+      mode = "n";
       key = "<leader>e";
       action = "<cmd>Oil<cr>";
       options = { desc = "Open explorer buffer"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>E";
+      action = "<cmd>Neotree filesystem toggle left<cr>";
+      options = { desc = "Toggle Neo-tree"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>er";
+      action = "<cmd>Neotree filesystem reveal left<cr>";
+      options = { desc = "Reveal file in Neo-tree"; };
+    }
+    {
+      mode = "n";
+      key = "<leader>oy";
+      action = "<cmd>lua require('config.oil').copy_current_dir()<cr>";
+      options = { desc = "Copy current directory"; };
     }
     {
       mode = "n";
@@ -406,12 +430,34 @@
         enable = true;
         settings = {
           default_file_explorer = true;
+          columns = [ "icon" "permissions" "size" "mtime" ];
           view_options = {
             show_hidden = true;
           };
           win_options = {
             winbar = "%{v:lua.oil_winbar()}";
             winhighlight = "WinBar:Normal,WinBarNC:Normal";
+          };
+        };
+      };
+      neo-tree = {
+        enable = true;
+        settings = {
+          close_if_last_window = true;
+          popup_border_style = "rounded";
+          enable_git_status = true;
+          enable_diagnostics = true;
+          filesystem = {
+            follow_current_file = {
+              enabled = true;
+              leave_dirs_open = true;
+            };
+            use_libuv_file_watcher = true;
+            hijack_netrw_behavior = "open_default";
+          };
+          window = {
+            position = "left";
+            width = 36;
           };
         };
       };
