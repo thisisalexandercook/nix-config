@@ -6,6 +6,7 @@ let
     "${config.home.homeDirectory}/eisop/checker-framework"
     "${config.home.homeDirectory}/eisop/runtime-framework"
     "${config.home.homeDirectory}/codex"
+    "${config.home.homeDirectory}/cs644/joos1w-compiler"
   ];
 in
 {
