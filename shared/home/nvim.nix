@@ -245,26 +245,8 @@
     {
       mode = "n";
       key = "<leader>gs";
-      action = "<cmd>Neogit<cr>";
-      options = { desc = "Git status"; };
-    }
-    {
-      mode = "n";
-      key = "<leader>gR";
-      action = "<cmd>lua pcall(function() require('neogit').refresh() end)<cr>";
-      options = { desc = "Refresh Neogit"; };
-    }
-    {
-      mode = "n";
-      key = "<leader>gS";
       action = "<cmd>Git<cr>";
-      options = { desc = "Fugitive status"; };
-    }
-    {
-      mode = "n";
-      key = "<leader>gl";
-      action = "<cmd>Git log --graph --oneline --decorate --all<cr>";
-      options = { desc = "Git log graph"; };
+      options = { desc = "Git status (Fugitive)"; };
     }
     {
       mode = "n";
@@ -534,20 +516,6 @@
         manualMode = false;
       };
 
-      neogit = {
-        enable = true;
-        kind = "split";
-        disableHints = false;
-        settings = {
-          auto_close = false;
-          auto_refresh = false;
-          filewatcher = {
-            enabled = false;
-          };
-          remember_settings = false;
-          use_per_project_settings = false;
-        };
-      };
     };
   };
 }
