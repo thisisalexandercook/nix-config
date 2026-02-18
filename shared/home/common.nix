@@ -20,6 +20,7 @@
 
     sessionVariables = {
       EDITOR = "emacs";
+      JOL_CLI_JAR = "${pkgs.jol}/share/jol-cli/jol-cli.jar";
     };
   };
 
@@ -212,6 +213,7 @@
     pkgs.ibm-plex
     pkgs.aporetic
     pkgs.jdk21
+    pkgs.jol
     pkgs.texlive.combined.scheme-full
     pkgs.ott
     pkgs.gradle

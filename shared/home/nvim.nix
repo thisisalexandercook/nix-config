@@ -504,6 +504,15 @@
           pickers = {
             find_files = {
               hidden = true;
+              path_display = [ "smart" ];
+              layout_strategy = "horizontal";
+              layout_config = {
+                width = 0.98;
+                height = 0.95;
+                horizontal = {
+                  preview_width = 0.40;
+                };
+              };
             };
           };
         };

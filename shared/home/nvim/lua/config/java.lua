@@ -1,6 +1,11 @@
 local M = {}
 
 function M.setup()
+  local ok_jdtls, jdtls = pcall(require, "jdtls")
+  if ok_jdtls and vim.env.JOL_CLI_JAR and vim.env.JOL_CLI_JAR ~= "" then
+    jdtls.jol_path = vim.env.JOL_CLI_JAR
+  end
+
   local ok_dap, dap = pcall(require, "dap")
   local ok_dapui, dapui = pcall(require, "dapui")
   if ok_dap and ok_dapui then
@@ -35,7 +40,6 @@ function M.setup()
         return
       end
 
-      local ok_jdtls, jdtls = pcall(require, "jdtls")
       if not ok_jdtls then
         return
       end

@@ -64,10 +64,13 @@
                   javaPackages.compiler.openjdk25
                   gradle
                   jdt-language-server
+                  jol
                 ];
                 shellHook = ''
                   ${setupJdkSource pkgs.javaPackages.compiler.openjdk25 "jdk25"}
                   export JAVA_HOME=${pkgs.javaPackages.compiler.openjdk25}
+                  export JOL_CLI_JAR=${pkgs.jol}/share/jol-cli/jol-cli.jar
+                  export JOL_CP="build/classes/java/main:build/resources/main:build/classes/java/test:build/resources/test"
                 '';
               };
             };
