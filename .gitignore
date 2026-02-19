@@ -11,3 +11,7 @@ shared/home/.emacs.d/projects
 shared/home/.emacs.d/.org*
 shared/home/.emacs.d/custom.el
 .nvimlog
+shared/home/.emacs.d/eglot-jdtls-workspaces/
+shared/home/.emacs.d/eglot/
+shared/home/.emacs.d/persist/
+shared/home/.emacs.d/share/
