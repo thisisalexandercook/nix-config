@@ -282,10 +282,13 @@
 ;; envrc
 (use-package envrc
   :hook (after-init . envrc-global-mode))
-;;
+
 ;; activities
 (use-package activities
   :ensure t
+  :bind
+  (([remap switch-to-buffer] . activities-switch-buffer)
+   ("C-x C-a b" . activities-switch-buffer))
   :init
   (activities-mode)
   (activities-tabs-mode)

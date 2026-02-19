@@ -9,6 +9,71 @@
 (defclass my/eglot-java-server (eglot-lsp-server) ()
   "JDT LS server with classfile content support enabled.")
 
+(defgroup my/java nil
+  "Local Java tooling customizations."
+  :group 'tools)
+;;
+(defcustom my/java-checker-framework-root
+  (expand-file-name "~/eisop/checker-framework")
+  "Root directory of a local Checker Framework checkout."
+  :type 'directory
+  :group 'my/java)
+
+(defcustom my/java-eglot-gradle-init-script
+  (expand-file-name "eglot/checker-framework.init.gradle" user-emacs-directory)
+  "Path to the Gradle init script used by JDT LS imports."
+  :type 'file
+  :group 'my/java)
+
+(defun my/java-checker-framework-referenced-libraries ()
+  "Return Checker Framework library globs for JDT LS."
+  (let* ((root (expand-file-name my/java-checker-framework-root))
+         (checker-dist (expand-file-name "checker/dist" root)))
+    (if (file-directory-p checker-dist)
+        (vector (expand-file-name "*.jar" checker-dist))
+      [])))
+
+(defun my/java--checker-qual-jar ()
+  "Return absolute path to local checker-qual jar."
+  (expand-file-name "checker/dist/checker-qual.jar"
+                    (expand-file-name my/java-checker-framework-root)))
+
+(defun my/java-eglot--ensure-gradle-init-script ()
+  "Write/update the Gradle init script used to inject local CF jars."
+  (let* ((script-path (expand-file-name my/java-eglot-gradle-init-script))
+         (checker-qual-jar (my/java--checker-qual-jar))
+         (script-dir (file-name-directory script-path))
+         (script-content
+          (format
+           (concat
+            "def checkerQualJar = new File('%s')\n"
+            "allprojects { p ->\n"
+            "  p.plugins.withId('java') {\n"
+            "    if (checkerQualJar.exists()) {\n"
+            "      p.dependencies.add('compileOnly', p.files(checkerQualJar))\n"
+            "    }\n"
+            "  }\n"
+            "}\n")
+           (replace-regexp-in-string "'" "\\\\'" checker-qual-jar t t))))
+    (unless (file-directory-p script-dir)
+      (make-directory script-dir t))
+    (with-temp-file script-path
+      (insert script-content))
+    script-path))
+
+(defun my/java-eglot-workspace-configuration ()
+  "Return Eglot/JDT LS workspace settings."
+  (let* ((gradle-init-script (my/java-eglot--ensure-gradle-init-script))
+         (checker-framework-libs (my/java-checker-framework-referenced-libraries))
+         (java-project-settings
+          (append
+           '(:resourceFilters ["node_modules" ".git" "src/test/resources"])
+           (when (> (length checker-framework-libs) 0)
+             `(:referencedLibraries ,checker-framework-libs)))))
+    `(:java (:import (:exclusions ["**/src/test/resources/**"]
+                      :gradle (:arguments ,(format "-I%s" gradle-init-script)))
+             :project ,java-project-settings))))
+
 (cl-defmethod eglot-initialization-options ((server my/eglot-java-server))
   "Augment initialization options for JDT LS classfile navigation."
   (let ((opts (cl-call-next-method)))
@@ -16,13 +81,17 @@
      ((hash-table-p opts)
       (let ((caps (make-hash-table :test 'equal)))
         (puthash "classFileContentsSupport" t caps)
-        (puthash "extendedClientCapabilities" caps opts))
+        (puthash "extendedClientCapabilities" caps opts)
+        (puthash "settings" (my/java-eglot-workspace-configuration) opts))
       opts)
      ((listp opts)
-      (plist-put opts :extendedClientCapabilities
-                 '(:classFileContentsSupport t)))
+      (setq opts (plist-put opts :extendedClientCapabilities
+                            '(:classFileContentsSupport t)))
+      (setq opts (plist-put opts :settings (my/java-eglot-workspace-configuration)))
+      opts)
      (t
-      '(:extendedClientCapabilities (:classFileContentsSupport t))))))
+      `(:extendedClientCapabilities (:classFileContentsSupport t)
+        :settings ,(my/java-eglot-workspace-configuration))))))
 
 (defun my/java-lsp-eligible-file-p (file)
   "Return non-nil when FILE should be managed by Java LSP."
@@ -100,12 +169,10 @@
 (defun my/java-eglot-setup ()
   "Configure Eglot for Java projects."
   (interactive)
+  (setq-default eglot-workspace-configuration (my/java-eglot-workspace-configuration))
   (add-to-list 'eglot-stay-out-of 'imenu)
   (setq eglot-report-progress nil)
   (setq eglot-connect-timeout 120)
-  (setq-default eglot-workspace-configuration
-                '(:java (:import (:exclusions ["**/src/test/resources/**"])
-                         :project (:resourceFilters ["node_modules" ".git" "src/test/resources"]))))
   (add-to-list 'eglot-ignored-server-capabilities :workspace/didChangeWorkspaceFolders)
   (add-hook 'java-mode-hook #'my/java-eglot-maybe-enable)
   (add-hook 'java-ts-mode-hook #'my/java-eglot-maybe-enable)
