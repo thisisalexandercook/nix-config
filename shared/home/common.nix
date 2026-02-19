@@ -214,6 +214,7 @@
     pkgs.ibm-plex
     pkgs.aporetic
     pkgs.jdk21
+    pkgs.jdt-language-server
     pkgs.jol
     pkgs.texlive.combined.scheme-full
     pkgs.ott
