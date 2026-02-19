@@ -288,7 +288,15 @@
   :ensure t
   :bind
   (([remap switch-to-buffer] . activities-switch-buffer)
-   ("C-x C-a b" . activities-switch-buffer))
+   ("C-x C-a C-n" . activities-new)
+   ("C-x C-a C-d" . activities-define)
+   ("C-x C-a C-a" . activities-resume)
+   ("C-x C-a C-s" . activities-suspend)
+   ("C-x C-a C-k" . activities-kill)
+   ("C-x C-a RET" . activities-switch)
+   ("C-x C-a b" . activities-switch-buffer)
+   ("C-x C-a g" . activities-revert)
+   ("C-x C-a l" . activities-list))
   :init
   (activities-mode)
   (activities-tabs-mode)
