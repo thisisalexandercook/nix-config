@@ -15,13 +15,14 @@
 
   home.stateVersion = "25.05";
 
+  home.sessionVariables = {
+    EDITOR = "emacs";
+    JOL_CLI_JAR = "${pkgs.jol}/share/jol-cli/jol-cli.jar";
+    JAVA_HOME = "${pkgs.jdk21}/lib/openjdk";
+  };
+
   programs.bash = {
     enable = true;
-
-    sessionVariables = {
-      EDITOR = "emacs";
-      JOL_CLI_JAR = "${pkgs.jol}/share/jol-cli/jol-cli.jar";
-    };
   };
 
   programs.git = {

@@ -1,6 +1,7 @@
 ;;misc
 (setq inhibit-startup-screen t)
 (global-visual-line-mode 1)
+(setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 (delete-selection-mode 1)
 (setq select-enable-clipboard t)
@@ -63,7 +64,7 @@
         modus-themes-org-blocks 'gray-background)
   ;; Dark theme: modus-vivendi. Light theme: modus-operandi
   (load-theme 'modus-operandi t))
-
+;;
 ;; fontaine
 (use-package fontaine
   :ensure t
@@ -148,6 +149,12 @@
   :ensure nil
   :config
   (winner-mode 1))
+
+;; windmove
+(use-package windmove
+  :ensure nil
+  :config
+  (windmove-default-keybindings))
 
 ;; nix mode
 (use-package nix-mode
@@ -270,16 +277,18 @@
 (use-package markdown-mode
   :ensure t
   :mode ("\\.md\\'" . gfm-mode))
-
+;;
 ;; envrc
 (use-package envrc
   :hook (after-init . envrc-global-mode))
-
-;; beframe
-(use-package beframe
+;;
+;; activities
+(use-package activities
   :ensure t
-  :config
-  (beframe-mode 1))
+  :init
+  (activities-mode)
+  (activities-tabs-mode)
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t))
 
 ;; tree-sitter
 (use-package treesit
@@ -307,12 +316,71 @@
   :ensure t
   :config
   (add-to-list 'eglot-stay-out-of 'imenu)
-  (setq eglot-report-progress nil)
+  (setq eglot-report-progress nil))
 
+(defun my/java-lsp-eligible-file-p (file)
+  "Return non-nil when FILE should be managed by Java LSP."
+  (let ((f (file-truename file)))
+    (and
+     (not (string-match-p "/src/test/resources/" f))
+     (or (string-match-p "/src/main/java/" f)
+         (string-match-p "/src/test/java/" f)))))
+
+(defun my/java-eglot-maybe-enable ()
+  "Enable eglot-java-mode only for Java source files."
+  (when (and buffer-file-name
+             (my/java-lsp-eligible-file-p buffer-file-name))
+    (eglot-java-mode 1)))
+
+(defun my/eglot-java-init-opts (_server _eglot-java-eclipse-jdt)
+  "Extra JDT LS settings for fixture-heavy projects."
+  '(:settings
+    (:java
+     (:import (:exclusions ["**/src/test/resources/**"])
+      :project (:resourceFilters ["node_modules" ".git" "src/test/resources"])))))
+
+;; eglot-java
+(use-package eglot-java
+  :ensure t
+  :after eglot
+  :init
+  (let* ((javac-bin (ignore-errors
+                      (file-chase-links (executable-find "javac"))))
+         (java-root-from-javac (and javac-bin
+                                    (expand-file-name ".." (file-name-directory javac-bin))))
+         (java-home-from-javac
+          (cond
+           ((and java-root-from-javac
+                 (file-directory-p (expand-file-name "jmods" java-root-from-javac)))
+            java-root-from-javac)
+           ((and java-root-from-javac
+                 (file-directory-p (expand-file-name "lib/openjdk/jmods" java-root-from-javac)))
+            (expand-file-name "lib/openjdk" java-root-from-javac))
+           (t nil)))
+         (java-bin-from-javac (and java-home-from-javac
+                                   (expand-file-name "bin/java" java-home-from-javac))))
+    ;; On Nix, prefer real JDK home (.../lib/openjdk), not wrapper roots.
+    (setq eglot-java-java-program
+          (or java-bin-from-javac
+              (ignore-errors (file-chase-links (executable-find "java"))))
+          )
+    (setq eglot-java-java-home
+          (or java-home-from-javac
+              (getenv "JAVA_HOME")
+              (ignore-errors
+                (expand-file-name
+                 ".."
+                 (file-name-directory
+                  (file-chase-links (executable-find "javac"))))))))
+    (when eglot-java-java-home
+      (setenv "JAVA_HOME" eglot-java-java-home))
+    (setq eglot-java-eglot-server-programs-manual-updates t)
+    (setq eglot-java-user-init-opts-fn #'my/eglot-java-init-opts))
+  :config
+  (add-hook 'java-mode-hook #'my/java-eglot-maybe-enable)
+  (add-hook 'java-ts-mode-hook #'my/java-eglot-maybe-enable)
   (add-to-list 'eglot-server-programs
-               '(java-mode java-ts-mode)
-	       .
-	       ("jdtls")))
+               '((java-mode java-ts-mode) . eglot-java--eclipse-contact))
 
 ;; org
 (use-package org
@@ -497,5 +565,3 @@
   :bind
   (:map dired-mode-map
         ("b" . my/dired-biblio-lookup)))
-
-
