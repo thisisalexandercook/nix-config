@@ -17,11 +17,12 @@
 (add-to-list 'load-path (expand-file-name "lisp/java" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/org-util" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/ott" user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "lisp/cfg" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp/modeline" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp/biblio" user-emacs-directory))
 
 ;; /lisp imports
 (require 'training-calculations)
+(require 'my-modeline)
 
 ;; Disable auto-save files (#file#)
 (setq auto-save-default nil)
