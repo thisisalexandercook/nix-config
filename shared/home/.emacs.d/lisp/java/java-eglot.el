@@ -3,6 +3,8 @@
 (require 'cl-lib)
 (require 'eglot)
 (require 'jsonrpc)
+(require 'java-extra-jars)
+(require 'pp)
 (require 'project)
 (require 'url-parse)
 
@@ -12,49 +14,39 @@
 (defgroup my/java nil
   "Local Java tooling customizations."
   :group 'tools)
-;;
-(defcustom my/java-checker-framework-root
-  (expand-file-name "~/eisop/checker-framework")
-  "Root directory of a local Checker Framework checkout."
-  :type 'directory
-  :group 'my/java)
 
 (defcustom my/java-eglot-gradle-init-script
-  (expand-file-name "eglot/checker-framework.init.gradle" user-emacs-directory)
+  (expand-file-name "eglot/extra-jars.init.gradle" user-emacs-directory)
   "Path to the Gradle init script used by JDT LS imports."
   :type 'file
   :group 'my/java)
 
-(defun my/java-checker-framework-referenced-libraries ()
-  "Return Checker Framework library globs for JDT LS."
-  (let* ((root (expand-file-name my/java-checker-framework-root))
-         (checker-dist (expand-file-name "checker/dist" root)))
-    (if (file-directory-p checker-dist)
-        (vector (expand-file-name "*.jar" checker-dist))
-      [])))
-
-(defun my/java--checker-qual-jar ()
-  "Return absolute path to local checker-qual jar."
-  (expand-file-name "checker/dist/checker-qual.jar"
-                    (expand-file-name my/java-checker-framework-root)))
-
 (defun my/java-eglot--ensure-gradle-init-script ()
-  "Write/update the Gradle init script used to inject local CF jars."
+  "Write/update the Gradle init script used to inject extra jars."
   (let* ((script-path (expand-file-name my/java-eglot-gradle-init-script))
-         (checker-qual-jar (my/java--checker-qual-jar))
+         (extra-jars (my/java-extra-jars-expanded))
          (script-dir (file-name-directory script-path))
+         (escaped-jars
+          (mapcar (lambda (jar)
+                    (replace-regexp-in-string "'" "\\\\'" jar t t))
+                  extra-jars))
          (script-content
           (format
            (concat
-            "def checkerQualJar = new File('%s')\n"
+            "def extraJars = [\n%s\n]\n"
             "allprojects { p ->\n"
             "  p.plugins.withId('java') {\n"
-            "    if (checkerQualJar.exists()) {\n"
-            "      p.dependencies.add('compileOnly', p.files(checkerQualJar))\n"
+            "    def existing = extraJars.findAll { it.exists() }\n"
+            "    if (!existing.isEmpty()) {\n"
+            "      p.dependencies.add('compileOnly', p.files(existing))\n"
             "    }\n"
             "  }\n"
             "}\n")
-           (replace-regexp-in-string "'" "\\\\'" checker-qual-jar t t))))
+           (if escaped-jars
+               (mapconcat (lambda (jar) (format "  new File('%s')" jar))
+                          escaped-jars
+                          ",\n")
+             ""))))
     (unless (file-directory-p script-dir)
       (make-directory script-dir t))
     (with-temp-file script-path
@@ -64,15 +56,48 @@
 (defun my/java-eglot-workspace-configuration ()
   "Return Eglot/JDT LS workspace settings."
   (let* ((gradle-init-script (my/java-eglot--ensure-gradle-init-script))
-         (checker-framework-libs (my/java-checker-framework-referenced-libraries))
+         (extra-libs (my/java-extra-jars-referenced-libraries))
          (java-project-settings
           (append
            '(:resourceFilters ["node_modules" ".git" "src/test/resources"])
-           (when (> (length checker-framework-libs) 0)
-             `(:referencedLibraries ,checker-framework-libs)))))
+           (when (> (length extra-libs) 0)
+             `(:referencedLibraries ,extra-libs)))))
     `(:java (:import (:exclusions ["**/src/test/resources/**"]
                       :gradle (:arguments ,(format "-I%s" gradle-init-script)))
              :project ,java-project-settings))))
+
+(defun my/java-eglot-show-extra-jars ()
+  "Show effective extra jar configuration sent to JDT LS."
+  (interactive)
+  (let* ((configured (mapcar #'my/java-extra-jars--normalize-entry my/java-extra-jars))
+         (resolved (my/java-extra-jars-expanded))
+         (referenced (append (my/java-extra-jars-referenced-libraries) nil))
+         (gradle-init-script (my/java-eglot--ensure-gradle-init-script))
+         (workspace-config (my/java-eglot-workspace-configuration)))
+    (with-current-buffer (get-buffer-create "*Java Eglot Extra Jars*")
+      (erase-buffer)
+      (insert "Configured entries (my/java-extra-jars):\n")
+      (dolist (entry configured)
+        (insert "  - " entry "\n"))
+      (insert "\nResolved existing jars:\n")
+      (if resolved
+          (dolist (jar resolved)
+            (insert "  - " jar "\n"))
+        (insert "  (none)\n"))
+      (insert "\nJDTLS java.project.referencedLibraries entries:\n")
+      (if referenced
+          (dolist (entry referenced)
+            (insert "  - " entry "\n"))
+        (insert "  (none)\n"))
+      (insert "\nGradle init script:\n")
+      (insert "  " gradle-init-script "\n")
+      (insert "Gradle args:\n")
+      (insert "  -I" gradle-init-script "\n")
+      (insert "\nWorkspace config payload:\n")
+      (pp workspace-config (current-buffer))
+      (goto-char (point-min))
+      (view-mode 1)
+      (display-buffer (current-buffer)))))
 
 (cl-defmethod eglot-initialization-options ((server my/eglot-java-server))
   "Augment initialization options for JDT LS classfile navigation."
