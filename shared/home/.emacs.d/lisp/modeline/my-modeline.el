@@ -27,9 +27,14 @@
   "Face for modeline buffer name."
   :group 'my/modeline)
 
-(defface my/modeline-vcs
+(defface my/modeline-vcs-active
   '((t :inherit mode-line :slant italic))
-  "Face for modeline version-control segment."
+  "Face for active-window modeline version-control segment."
+  :group 'my/modeline)
+
+(defface my/modeline-vcs-inactive
+  '((t :inherit mode-line-inactive :slant italic))
+  "Face for inactive-window modeline version-control segment."
   :group 'my/modeline)
 
 (defcustom my/modeline-segments '(status buffer vcs)
@@ -60,7 +65,9 @@
   "Return VCS segment for the current buffer, or nil."
   (when vc-mode
     (propertize (string-trim (format-mode-line '(vc-mode vc-mode)))
-                'face 'my/modeline-vcs)))
+                'face (if (mode-line-window-selected-p)
+                          'my/modeline-vcs-active
+                        'my/modeline-vcs-inactive))))
 
 (defvar my/modeline-segment-functions
   '((status . my/modeline-segment-status)
