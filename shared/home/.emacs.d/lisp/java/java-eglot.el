@@ -21,10 +21,45 @@
   :type 'file
   :group 'my/java)
 
-(defun my/java-eglot--ensure-gradle-init-script ()
+(defcustom my/java-eglot-javac-export-packages
+  '("com.sun.tools.javac.api"
+    "com.sun.tools.javac.code"
+    "com.sun.tools.javac.comp"
+    "com.sun.tools.javac.file"
+    "com.sun.tools.javac.jvm"
+    "com.sun.tools.javac.main"
+    "com.sun.tools.javac.model"
+    "com.sun.tools.javac.parser"
+    "com.sun.tools.javac.processing"
+    "com.sun.tools.javac.tree"
+    "com.sun.tools.javac.util")
+  "JDK compiler packages to export to JDT LS."
+  :type '(repeat string)
+  :group 'my/java)
+
+(defun my/java-eglot--project-root ()
+  "Return current project root directory, or nil when unavailable."
+  (when-let ((project (project-current nil)))
+    (project-root project)))
+
+(defun my/java-eglot--current-build-root ()
+  "Return the current Gradle subproject root when available."
+  (let* ((anchor (or buffer-file-name default-directory))
+         (gradle-root
+          (or (and anchor (locate-dominating-file anchor "build.gradle"))
+              (and anchor (locate-dominating-file anchor "build.gradle.kts")))))
+    (or gradle-root (my/java-eglot--project-root))))
+
+(defun my/java-eglot--jdtls-jvm-args ()
+  "Return JVM args passed to jdtls."
+  (mapcar (lambda (pkg)
+            (format "--jvm-arg=--add-exports=jdk.compiler/%s=ALL-UNNAMED" pkg))
+          my/java-eglot-javac-export-packages))
+
+(defun my/java-eglot--ensure-gradle-init-script (&optional extra-jars)
   "Write/update the Gradle init script used to inject extra jars."
   (let* ((script-path (expand-file-name my/java-eglot-gradle-init-script))
-         (extra-jars (my/java-extra-jars-expanded))
+         (extra-jars (or extra-jars (my/java-extra-jars-expanded)))
          (script-dir (file-name-directory script-path))
          (escaped-jars
           (mapcar (lambda (jar)
@@ -55,14 +90,17 @@
 
 (defun my/java-eglot-workspace-configuration ()
   "Return Eglot/JDT LS workspace settings."
-  (let* ((gradle-init-script (my/java-eglot--ensure-gradle-init-script))
-         (extra-libs (my/java-extra-jars-referenced-libraries))
+  (let* ((build-root (my/java-eglot--current-build-root))
+         (extra-jars (my/java-extra-jars-for-project build-root))
+         (gradle-init-script (my/java-eglot--ensure-gradle-init-script extra-jars))
+         (extra-libs (vconcat extra-jars))
          (java-project-settings
           (append
            '(:resourceFilters ["node_modules" ".git" "src/test/resources"])
            (when (> (length extra-libs) 0)
              `(:referencedLibraries ,extra-libs)))))
-    `(:java (:import (:exclusions ["**/src/test/resources/**"]
+    `(:java (:import (:exclusions ["**/src/test/resources/**"
+                                   "**/build/generated/**/annotated-jdk/**"]
                       :gradle (:arguments ,(format "-I%s" gradle-init-script)))
              :project ,java-project-settings))))
 
@@ -70,9 +108,11 @@
   "Show effective extra jar configuration sent to JDT LS."
   (interactive)
   (let* ((configured (mapcar #'my/java-extra-jars--normalize-entry my/java-extra-jars))
+         (build-root (my/java-eglot--current-build-root))
          (resolved (my/java-extra-jars-expanded))
-         (referenced (append (my/java-extra-jars-referenced-libraries) nil))
-         (gradle-init-script (my/java-eglot--ensure-gradle-init-script))
+         (filtered (my/java-extra-jars-for-project build-root))
+         (referenced (append (vconcat filtered) nil))
+         (gradle-init-script (my/java-eglot--ensure-gradle-init-script filtered))
          (workspace-config (my/java-eglot-workspace-configuration)))
     (with-current-buffer (get-buffer-create "*Java Eglot Extra Jars*")
       (erase-buffer)
@@ -82,6 +122,11 @@
       (insert "\nResolved existing jars:\n")
       (if resolved
           (dolist (jar resolved)
+            (insert "  - " jar "\n"))
+        (insert "  (none)\n"))
+      (insert "\nFiltered jars for current project:\n")
+      (if filtered
+          (dolist (jar filtered)
             (insert "  - " jar "\n"))
         (insert "  (none)\n"))
       (insert "\nJDTLS java.project.referencedLibraries entries:\n")
@@ -189,7 +234,9 @@
     (unless (file-directory-p workspace-dir)
       (make-directory workspace-dir t))
     (cons 'my/eglot-java-server
-          (list "jdtls" "-data" workspace-dir))))
+          (append (list "jdtls")
+                  (my/java-eglot--jdtls-jvm-args)
+                  (list "-data" workspace-dir)))))
 
 (defun my/java-eglot-setup ()
   "Configure Eglot for Java projects."
