@@ -18,7 +18,7 @@
   :group 'my/modeline)
 
 (defface my/modeline-status-read-only
-  '((t :foreground "goldenrod3" :weight bold))
+  '((t :foreground "black" :weight bold))
   "Face for read-only status indicator."
   :group 'my/modeline)
 
@@ -47,15 +47,20 @@
   :type 'string
   :group 'my/modeline)
 
+(defconst my/modeline-read-only-indicator
+  (if (char-displayable-p ?) "" "RO")
+  "Read-only indicator with a fallback for fonts lacking the glyph.")
+
 (defun my/modeline-segment-status ()
   "Return modified/read-only/clean indicator segment."
   (cond
    (buffer-read-only
-    (propertize "🔒" 'face 'my/modeline-status-read-only))
+    (propertize (concat " " my/modeline-read-only-indicator)
+                'face 'my/modeline-status-read-only))
    ((buffer-modified-p)
-    (propertize "●" 'face 'my/modeline-status-modified))
+    (propertize " ●" 'face 'my/modeline-status-modified))
    (t
-    (propertize "●" 'face 'my/modeline-status-clean))))
+    (propertize " ●" 'face 'my/modeline-status-clean))))
 
 (defun my/modeline-segment-buffer ()
   "Return buffer name segment."
