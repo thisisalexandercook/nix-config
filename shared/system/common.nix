@@ -88,6 +88,14 @@ services.avahi = {
     #media-session.enable = true;
   };
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -114,6 +122,11 @@ services.avahi = {
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     sops
+    lutris
+    wineWowPackages.stable
+    winetricks
+    mangohud
+    vulkan-tools
   ];
 
   sops = {
