@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: inference rule (mathpartir)
+# key: ir
+# --
+\inferrule*[right=${1:RuleName}]
+{
+  ${2:premise_1} \\
+  ${3:premise_2}
+}
+{
+  ${4:\Gamma \vdash e : \tau}
+}
+$0
