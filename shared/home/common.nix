@@ -4,11 +4,8 @@
   imports = [
     ./codex.nix
     ./emacs.nix
-    ./nvim.nix
     ./projects.nix
-    ./tmux.nix
     ./gemini.nix
-    ./wezterm.nix
   ];
 
   fonts.fontconfig.enable = true;
@@ -223,7 +220,6 @@
     pkgs.cmake
     pkgs.libtool
     pkgs.gcc
-    pkgs.tmux
     pkgs.git-lfs
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     pkgs.ripgrep

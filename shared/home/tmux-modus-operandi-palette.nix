@@ -1,7 +1,7 @@
 {
   # Source:
-  # /nix/store/.../modus-themes.nvim/lua/modus-themes/colors.lua
-  # /nix/store/.../modus-themes.nvim/lua/lualine/themes/modus.lua
+  # /nix/store/.../modus themes color definitions
+  # /nix/store/.../lualine theme definitions
   # Theme: modus-operandi (lualine-aligned values)
   colors = {
     bgDim = "#f2f2f2";

@@ -88,9 +88,8 @@ let
     fi
 
     tmux new-session -d -s "$session_name" -n main -c "$project_root"
-    tmux send-keys -t "$session_name:main" "nvim ." C-m
     tmux new-window -t "$session_name:" -n sandbox -c "$project_root"
-    tmux split-window -h -t "$session_name:sandbox" -c "$project_root" "nvim '+Git' '+wincmd ='"
+    tmux split-window -h -t "$session_name:sandbox" -c "$project_root"
     tmux select-pane -t "$session_name:sandbox" -L
     tmux select-window -t "$session_name:main"
 
@@ -131,15 +130,13 @@ in
       bind-key -N "cfg: split pane horizontally (prefix v)" v split-window -h
       bind-key -N "cfg: split pane vertically (prefix s)" s split-window -v
 
-      # Seamless pane navigation with Neovim splits.
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\S+\/)?g?(view|l?n?vim?x?)(diff)?$'"
-      bind-key -N "cfg: split pane horizontally (Alt+v)" -n M-v if-shell "$is_vim" "send-keys M-v" "split-window -h"
-      bind-key -N "cfg: split pane vertically (Alt+s)" -n M-s if-shell "$is_vim" "send-keys M-s" "split-window -v"
-      bind-key -N "cfg: close pane (Alt+q)" -n M-q if-shell "$is_vim" "send-keys M-q" "kill-pane"
-      bind-key -N "cfg: resize pane left (Alt+Shift+h)" -n M-H if-shell "$is_vim" "send-keys M-H" "resize-pane -L 5"
-      bind-key -N "cfg: resize pane down (Alt+Shift+j)" -n M-J if-shell "$is_vim" "send-keys M-J" "resize-pane -D 3"
-      bind-key -N "cfg: resize pane up (Alt+Shift+k)" -n M-K if-shell "$is_vim" "send-keys M-K" "resize-pane -U 3"
-      bind-key -N "cfg: resize pane right (Alt+Shift+l)" -n M-L if-shell "$is_vim" "send-keys M-L" "resize-pane -R 5"
+      bind-key -N "cfg: split pane horizontally (Alt+v)" -n M-v split-window -h
+      bind-key -N "cfg: split pane vertically (Alt+s)" -n M-s split-window -v
+      bind-key -N "cfg: close pane (Alt+q)" -n M-q kill-pane
+      bind-key -N "cfg: resize pane left (Alt+Shift+h)" -n M-H resize-pane -L 5
+      bind-key -N "cfg: resize pane down (Alt+Shift+j)" -n M-J resize-pane -D 3
+      bind-key -N "cfg: resize pane up (Alt+Shift+k)" -n M-K resize-pane -U 3
+      bind-key -N "cfg: resize pane right (Alt+Shift+l)" -n M-L resize-pane -R 5
       bind-key -N "cfg: enter copy mode (Alt+c)" -n M-c copy-mode
       bind-key -N "cfg: show key help popup (Alt+/)" -n M-/ display-popup -E "sh -lc 'printf \"tmux key help (live)\\n\\nNo prefix\\n\"; tmux list-keys -N -T root | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPrefix (Ctrl+Space)\\n\"; tmux list-keys -N -T prefix | grep \"cfg:\" | sed \"s/^/  /\"; printf \"\\nPress any key to close...\"; read -r -n 1 -s _'"
       # Fast window cycling within the current project/session.
@@ -159,11 +156,11 @@ in
       bind-key -N "cfg: next session/project (Alt+Shift+n)" -n M-N switch-client -n
       bind-key -N "cfg: previous session/project (Alt+Shift+p)" -n M-P switch-client -p
       bind-key -N "cfg: choose session tree (Alt+Shift+s)" -n M-S choose-tree -s
-      bind-key -N "cfg: move to left pane (Ctrl+h)" -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
-      bind-key -N "cfg: move to lower pane (Ctrl+j)" -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
-      bind-key -N "cfg: move to upper pane (Ctrl+k)" -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
-      bind-key -N "cfg: move to right pane (Ctrl+l)" -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
-      bind-key -N "cfg: move to last pane (Ctrl+\\)" -n C-\\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
+      bind-key -N "cfg: move to left pane (Ctrl+h)" -n C-h select-pane -L
+      bind-key -N "cfg: move to lower pane (Ctrl+j)" -n C-j select-pane -D
+      bind-key -N "cfg: move to upper pane (Ctrl+k)" -n C-k select-pane -U
+      bind-key -N "cfg: move to right pane (Ctrl+l)" -n C-l select-pane -R
+      bind-key -N "cfg: move to last pane (Ctrl+\\)" -n C-\\ select-pane -l
     '';
   };
 

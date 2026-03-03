@@ -11,10 +11,6 @@
       url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,7 +18,7 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {self, nixpkgs, home-manager, nixvim, sops-nix, flake-utils, ...}@inputs:
+  outputs = {self, nixpkgs, home-manager, sops-nix, flake-utils, ...}@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
