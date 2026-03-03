@@ -4,7 +4,6 @@
   imports = [
     ./codex.nix
     ./emacs.nix
-    ./projects.nix
     ./gemini.nix
   ];
 
