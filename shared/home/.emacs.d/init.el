@@ -336,10 +336,20 @@
   :ensure nil
   :init
   (require 'org-capture)
+  (require 'ob-shell)
+  (require 'ob-java)
+  (require 'ob-javac-compare)
   (require 'time-tracking)
   (require 'pull-block)
   (require 'org-id)
   :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (java . t)))
+  (add-to-list 'org-src-lang-modes '("javac" . java))
+  (add-to-list 'org-src-lang-modes '("checker-javac" . java))
   (setq org-M-RET-may-split-line '((default . nil)))
   (setq org-insert-heading-respect-content t)
   (setq org-log-done 'time)
