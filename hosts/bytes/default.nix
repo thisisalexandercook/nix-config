@@ -1,5 +1,5 @@
 # hosts/bytes/default.nix
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ./forge.nix ./forge-backup.nix ];
@@ -7,6 +7,12 @@
   fileSystems."/mnt/backup" = {
     device = "/dev/disk/by-label/forge_backup";
     fsType = "ext4";
+  };
+
+  fileSystems."/mnt/data" = {
+    device = lib.mkForce "/dev/disk/by-label/forge_data";
+    fsType = "ext4";
+    options = [ "nofail" "x-systemd.device-timeout=10s" ];
   };
 
   networking.hostName = "bytes";
