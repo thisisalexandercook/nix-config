@@ -1,0 +1,59 @@
+#+title: NixOS Host Bootstrap Guide
+
+* Current hosts:
+- ~bits~
+- ~bytes~
+- ~nibble~
+
+
+* Bootstrap Tools on a Clean Install
+Start a temporary shell with everything needed:
+
+#+begin_src bash
+nix --extra-experimental-features "nix-command flakes" \
+  shell nixpkgs#git nixpkgs#sops nixpkgs#age nixpkgs#emacs
+#+end_src
+
+Exit this shell with:
+- ~exit~
+- or ~Ctrl-D~
+
+* Clone Config
+#+begin_src bash
+cd ~
+git clone https://github.com/thisisalexandercook/nix-config nix-config
+cd nix-config
+#+end_src
+
+* Create/Update the Host Entry
+If adding a new machine (example: ~nibble~):
+1. Ensure ~hosts/nibble/default.nix~ exists and imports ~./hardware-configuration.nix~.
+2. Ensure ~flake.nix~ has ~nixosConfigurations.nibble~.
+3. Generate real hardware config on the target machine:
+
+#+begin_src bash
+sudo nixos-generate-config --show-hardware-config > ~/nix-config/hosts/nibble/hardware-configuration.nix
+#+end_src
+
+* SOPS Master Key
+1. Create Master Key file:
+#+begin_src bash
+mkdir -p ~/.config/sops/age
+chmod 700 ~/.config/sops/age
+emacs ~/.config/sops/age/keys.txt
+chmod 600 ~/.config/sops/age/keys.txt
+#+end_src
+2. Paste Master Key in file (currently stored on bit warden)
+3. Verify decryption works:
+#+begin_src bash
+cd ~/nix-config
+sops -d secrets/secrets.yaml >/dev/null && echo ok
+#+end_src
+
+* 4) Build and Switch on the New Host
+From the new host in ~/nix-config~:
+#+begin_src bash
+sudo nixos-rebuild switch --flake .#nibble
+#+end_src
+
+Replace ~nibble~ with whichever hostname is being deployed.
