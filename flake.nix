@@ -76,7 +76,7 @@
       {
         nixosConfigurations = {
 
-        # Laptop Host
+        # Bits Host
         bits = lib.nixosSystem {
           inherit system specialArgs;
           modules = [
@@ -100,7 +100,31 @@
           ];
         };
 
-        # Desktop Host
+        # Nibble Host
+        nibble = lib.nixosSystem {
+          inherit system specialArgs;
+          modules = [
+            sops-nix.nixosModules.sops
+            ./shared/system/common.nix
+            ./hosts/nibble
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "hm-backup";
+              home-manager.extraSpecialArgs = specialArgs;
+              home-manager.users.alex = {
+                imports = [
+                  ./shared/home/common.nix
+                  ./hosts/nibble/home.nix
+                  inputs.sops-nix.homeManagerModules.sops
+                ];
+              };
+            }
+          ];
+        };
+
+        # Bytes Host
         bytes = lib.nixosSystem {
           inherit system specialArgs;
           modules = [
