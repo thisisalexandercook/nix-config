@@ -239,6 +239,9 @@
       "org/gnome/desktop/interface" = {
         enable-hot-corners = false;
       };
+      "org/gnome/mutter" = {
+        experimental-features = [ "scale-monitor-framebuffer" ];
+      };
     };
   };
 
