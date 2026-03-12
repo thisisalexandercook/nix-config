@@ -484,6 +484,17 @@
   :config
   (setq vterm-max-scrollback 10000))
 
+;; agent-shell
+(use-package agent-shell
+  :ensure t
+  :bind
+  (("C-c a" . agent-shell))
+  :config
+  (setq agent-shell-openai-authentication
+        (agent-shell-openai-make-authentication :login t))
+  (setq agent-shell-openai-codex-environment
+        (agent-shell-make-environment-variables :inherit-env t)))
+
 ;; project-gemini
 (require 'gemini-integration)
 (with-eval-after-load 'project
