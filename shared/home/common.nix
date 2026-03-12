@@ -240,7 +240,10 @@
         enable-hot-corners = false;
       };
       "org/gnome/mutter" = {
-        experimental-features = [ "scale-monitor-framebuffer" ];
+        experimental-features = [
+          "scale-monitor-framebuffer"
+          "xwayland-native-scaling"
+        ];
       };
     };
   };
