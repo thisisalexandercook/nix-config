@@ -219,6 +219,7 @@
     pkgs.cmake
     pkgs.libtool
     pkgs.gcc
+    pkgs.nasm
     pkgs.git-lfs
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     pkgs.ripgrep

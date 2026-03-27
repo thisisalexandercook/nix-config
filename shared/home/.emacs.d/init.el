@@ -1,7 +1,7 @@
 ;;misc
 (setq inhibit-startup-screen t)
 (global-visual-line-mode 1)
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type t)
 (global-display-line-numbers-mode 1)
 (delete-selection-mode 1)
 (setq select-enable-clipboard t)
