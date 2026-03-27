@@ -1,13 +1,6 @@
-{ pkgs, ... }:
-let
-  codex-acp-wrapped = pkgs.writeShellScriptBin "codex-acp" ''
-    exec ${pkgs.nodejs}/bin/npx --yes @zed-industries/codex-acp@latest "$@"
-  '';
-in
-{
+{ pkgs, ... }: {
   home.packages = [
-    codex-acp-wrapped
-    pkgs.nodejs
+    pkgs.codex-acp
   ];
 
   home.file.".codex/config.toml".text = ''

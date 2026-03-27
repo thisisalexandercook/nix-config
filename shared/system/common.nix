@@ -36,13 +36,9 @@
   # services.displayManager.sddm.wayland.enable = true;
   # services.desktopManager.plasma6.enable = true;
 
-  # Enable GNOME Desktop Environment (Pre 25.11 options)
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Enable GNOME Desktop Environment (As of 25.11 options)
-  # services.displayManager.gdm.enable = true;
-  # services.desktopManager.gnome.enable = true;
+  # Enable GNOME Desktop Environment
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
