@@ -21,6 +21,12 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = with pkgs; [
+    networkmanager-openconnect
+  ];
+
+  # Ensure TUN is available for VPN tunnels.
+  boot.kernelModules = [ "tun" ];
 
   # Set your time zone.
   time.timeZone = "America/Toronto";
@@ -118,6 +124,7 @@ services.avahi = {
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     sops
+    openconnect
     lutris
     wineWowPackages.stable
     winetricks
