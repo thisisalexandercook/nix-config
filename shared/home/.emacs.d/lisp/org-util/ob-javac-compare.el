@@ -23,6 +23,7 @@
 (defvar org-babel-header-args:javac
   '((:classname . :any)
     (:dir . :any)
+    (:sources . :any)
     (:cmd . :any)
     (:flags . :any))
   "Javac-specific Babel header arguments.")
@@ -30,6 +31,7 @@
 (defvar org-babel-header-args:checker-javac
   '((:classname . :any)
     (:dir . :any)
+    (:sources . :any)
     (:cmd . :any)
     (:flags . :any))
   "Checker-javac-specific Babel header arguments.")
@@ -53,6 +55,16 @@
         (replace-regexp-in-string "%f" (shell-quote-argument src) cmd-with-flags t t)
       (concat cmd-with-flags " " (shell-quote-argument src)))))
 
+(defun my/org-babel--normalize-sources (sources)
+  "Normalize SOURCES header argument to a list of file paths."
+  (cond
+   ((null sources) nil)
+   ((stringp sources)
+    (split-string (string-trim sources) "[[:space:]\n,]+" t))
+   ((listp sources)
+    (mapcar (lambda (x) (format "%s" x)) sources))
+   (t (list (format "%s" sources)))))
+
 (defun my/org-babel--compile-java (body params default-cmd)
   "Compile BODY according to PARAMS using DEFAULT-CMD.
 Return compiler output string for Org Babel results."
@@ -68,10 +80,22 @@ Return compiler output string for Org Babel results."
            (t nil)))
          (cmd (or (my/org-babel--header :cmd params) default-cmd))
          (flags (my/org-babel--header :flags params))
+         (extra-sources (my/org-babel--normalize-sources
+                         (my/org-babel--header :sources params)))
          (workdir (or shared-dir (make-temp-file "ob-javac-" t)))
          (src (expand-file-name (format "%s.java" classname) workdir))
          (default-directory workdir)
-         (shell-cmd (concat (my/org-babel--render-command cmd src flags) " 2>&1"))
+         (extra-args
+          (mapconcat
+           (lambda (f)
+             (shell-quote-argument
+              (if (file-name-absolute-p f) f (expand-file-name f workdir))))
+           extra-sources
+           " "))
+         (shell-cmd
+          (concat (my/org-babel--render-command cmd src flags)
+                  (if (string-empty-p extra-args) "" (concat " " extra-args))
+                  " 2>&1"))
          (output "")
          (exit-code 0))
     (unless (file-directory-p workdir)
