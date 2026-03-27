@@ -201,6 +201,8 @@
   home.packages = [
     pkgs.xournalpp
     pkgs.xclip
+    pkgs.mpv
+    pkgs.yt-dlp
     pkgs.python3
     pkgs.rclone
     pkgs.syncthing
@@ -218,7 +220,9 @@
     pkgs.gnumake
     pkgs.cmake
     pkgs.libtool
+    pkgs.pkg-config
     pkgs.gcc
+    pkgs.taglib
     pkgs.nasm
     pkgs.git-lfs
     inputs.codex-cli-nix.packages.${pkgs.system}.default

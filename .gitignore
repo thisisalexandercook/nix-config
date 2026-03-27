@@ -15,3 +15,5 @@ shared/home/.emacs.d/eglot-jdtls-workspaces/
 shared/home/.emacs.d/eglot/
 shared/home/.emacs.d/persist/
 shared/home/.emacs.d/share/
+/.agent-shell/
+shared/home/.emacs.d/agent

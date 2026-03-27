@@ -95,9 +95,6 @@ services.avahi = {
     enable32Bit = true;
   };
 
-  programs.gamescope.enable = true;
-  programs.gamemode.enable = true;
-
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -125,11 +122,6 @@ services.avahi = {
   environment.systemPackages = with pkgs; [
     sops
     openconnect
-    lutris
-    wineWowPackages.stable
-    winetricks
-    mangohud
-    vulkan-tools
   ];
 
   sops = {

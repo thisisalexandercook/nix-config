@@ -3,7 +3,6 @@
 * Current hosts:
 - ~bits~
 - ~bytes~
-- ~nibble~
 
 
 * Bootstrap Tools on a Clean Install
@@ -26,13 +25,13 @@ cd nix-config
 #+end_src
 
 * Create/Update the Host Entry
-If adding a new machine (example: ~nibble~):
-1. Ensure ~hosts/nibble/default.nix~ exists and imports ~./hardware-configuration.nix~.
-2. Ensure ~flake.nix~ has ~nixosConfigurations.nibble~.
+If adding a new machine (example: ~bits~):
+1. Ensure ~hosts/bits/default.nix~ exists and imports ~./hardware-configuration.nix~.
+2. Ensure ~flake.nix~ has ~nixosConfigurations.bits~.
 3. Generate real hardware config on the target machine:
 
 #+begin_src bash
-sudo nixos-generate-config --show-hardware-config > ~/nix-config/hosts/nibble/hardware-configuration.nix
+sudo nixos-generate-config --show-hardware-config > ~/nix-config/hosts/bits/hardware-configuration.nix
 #+end_src
 
 * SOPS Master Key
@@ -51,9 +50,9 @@ sops -d secrets/secrets.yaml >/dev/null && echo ok
 #+end_src
 
 * 4) Build and Switch on the New Host
-From the new host in ~/nix-config~:
+From the new host in ~~/nix-config~:
 #+begin_src bash
-sudo nixos-rebuild switch --flake .#nibble
+sudo nixos-rebuild switch --flake .#bits
 #+end_src
 
-Replace ~nibble~ with whichever hostname is being deployed.
+Replace ~bits~ with whichever hostname is being deployed.

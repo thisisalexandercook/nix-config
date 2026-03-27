@@ -195,6 +195,35 @@
   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
   (yas-global-mode 1))
 
+;; emms (mpv backend)
+(use-package emms
+  :ensure t
+  :init
+  (setq emms-directory (expand-file-name "emms/" user-emacs-directory)
+        emms-playlist-buffer-name "*Music*"
+        emms-source-file-default-directory (expand-file-name "Music/" (getenv "HOME")))
+  :config
+  (require 'emms-setup)
+  (require 'emms-player-mpv)
+  (emms-all)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-info-functions '(emms-info-native)
+        emms-player-mpv-command-name "mpv"
+        emms-player-mpv-parameters '("--quiet" "--no-video"))
+  (emms-mode-line-mode 1)
+  (emms-playing-time-mode 1)
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "p") #'emms-pause)
+    (define-key map (kbd "n") #'emms-next)
+    (define-key map (kbd "b") #'emms-previous)
+    (define-key map (kbd "l") #'emms-playlist-mode-go)
+    (define-key map (kbd "f") #'emms-add-find)
+    (define-key map (kbd "d") #'emms-add-directory-tree)
+    (define-key map (kbd "s") #'emms-start)
+    (define-key map (kbd "RET") (lambda () (interactive) (emms-play-directory-tree emms-source-file-default-directory)))
+    (define-key map (kbd "SPC") #'emms-pause)
+    (define-key global-map (kbd "C-c m") map)))
+
 ;; flyspell
 (use-package flyspell
   :ensure nil
