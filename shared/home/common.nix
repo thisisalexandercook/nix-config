@@ -203,6 +203,7 @@
     pkgs.xclip
     pkgs.mpv
     pkgs.yt-dlp
+    pkgs.qbittorrent
     pkgs.python3
     pkgs.rclone
     pkgs.syncthing
