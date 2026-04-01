@@ -182,14 +182,16 @@
       "bytes" = {
         hostname = "bytes";
         port = 2223;
-        user = "git";
+        user = "forgejo";
         identityFile = "${config.sops.secrets.forgejo_key.path}";
+        identitiesOnly = true;
       };
       "bytes-backup" = {
         hostname = "bytes";
         port = 2222;
-        user = "git";
+        user = "forgejo";
         identityFile = "${config.sops.secrets.forgejo_backup_key.path}";
+        identitiesOnly = true;
       };
     };
   };
