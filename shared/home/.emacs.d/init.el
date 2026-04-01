@@ -220,14 +220,6 @@
     (define-key map (kbd "SPC") #'emms-pause)
     (define-key global-map (kbd "C-c m") map)))
 
-;; flyspell
-(use-package flyspell
-  :ensure nil
-  :hook ((text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode))
-  :config
-  (setq ispell-program-name "aspell"))
-
 ;; denote
 (use-package denote
   :ensure t
