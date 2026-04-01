@@ -9,7 +9,11 @@
     port = 3000;
     domain = "bytes";
     rootUrl = "http://bytes:3000/";
-    extraServerSettings = {};
+    extraServerSettings = {
+      SSH_PORT = 2223;
+      SSH_LISTEN_PORT = 2223;
+      START_SSH_SERVER = true;
+    };
   };
 
   systemd.services.forgejo.unitConfig.RequiresMountsFor = "/mnt/data";

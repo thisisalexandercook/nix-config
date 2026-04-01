@@ -147,7 +147,7 @@ services.avahi = {
 
   # Open ports in the firewall.
   networking.firewall = {
-    allowedTCPPorts = [ 22000 631 2222 ];
+    allowedTCPPorts = [ 22000 631 2222 2223 ];
     allowedUDPPorts = [ 22000 21027 631 5353 ];
     trustedInterfaces = [ "tailscale0" ];
   };

@@ -34,6 +34,10 @@
     };
   };
 
+  programs.firefox = {
+    enable = true;
+  };
+
   programs.gh = {
     enable = true;
     gitCredentialHelper.enable = true;
@@ -175,15 +179,16 @@
         user = "git";
         identityFile = "${config.sops.secrets.gitlab_key.path}";
       };
-        "bytes" = {
+      "bytes" = {
         hostname = "bytes";
-        user = "forgejo";
+        port = 2223;
+        user = "git";
         identityFile = "${config.sops.secrets.forgejo_key.path}";
       };
       "bytes-backup" = {
         hostname = "bytes";
         port = 2222;
-        user = "forgejo";
+        user = "git";
         identityFile = "${config.sops.secrets.forgejo_backup_key.path}";
       };
     };
@@ -202,12 +207,10 @@
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "application/pdf" = [ "org.gnome.Papers.desktop" ];
-      "application/x-pdf" = [ "org.gnome.Papers.desktop" ];
-      "application/acrobat" = [ "org.gnome.Papers.desktop" ];
-      "applications/vnd.pdf" = [ "org.gnome.Papers.desktop" ];
-      "text/pdf" = [ "org.gnome.Papers.desktop" ];
-      "text/x-pdf" = [ "org.gnome.Papers.desktop" ];
+      "text/html" = [ "firefox.desktop" ];
+      "application/xhtml+xml" = [ "firefox.desktop" ];
+      "x-scheme-handler/http" = [ "firefox.desktop" ];
+      "x-scheme-handler/https" = [ "firefox.desktop" ];
     };
   };
 
