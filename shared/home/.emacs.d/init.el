@@ -132,11 +132,7 @@
 
 ;; magit
 (use-package magit
-  :ensure t
-  :config
-  (with-eval-after-load 'magit
-    (transient-append-suffix 'magit-push "p"
-      '("B" "both" (lambda () (interactive) (magit-run-git-async "pushall"))))))
+  :ensure t)
 
 ;; eat
 (use-package eat

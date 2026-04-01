@@ -2,15 +2,15 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ./forge.nix ./forge-backup.nix ];
+  imports = [ ./hardware-configuration.nix ./forge.nix ./forge-backup.nix ./forge-backup-job.nix ];
 
   fileSystems."/mnt/backup" = {
-    device = "/dev/disk/by-label/forge_backup";
+    device = "/dev/disk/by-uuid/c13e63fd-7167-4a11-8dfe-608d6f0242a7";
     fsType = "ext4";
   };
 
   fileSystems."/mnt/data" = {
-    device = lib.mkForce "/dev/disk/by-label/forge_data";
+    device = lib.mkForce "/dev/disk/by-uuid/362b3928-ce58-410a-b1e7-1e0f10f46d3b";
     fsType = "ext4";
     options = [ "nofail" "x-systemd.device-timeout=10s" ];
   };
