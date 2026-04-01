@@ -34,6 +34,14 @@
     };
   };
 
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper.enable = true;
+    settings = {
+      git_protocol = "ssh";
+    };
+  };
+
   sops = {
     age.keyFile = "/home/alex/.config/sops/age/keys.txt";
     defaultSopsFile = ../../secrets/secrets.yaml;
@@ -80,6 +88,11 @@
 
     secrets.forgejo_backup_key = {
       key = "forgejo_backup_key";
+      mode = "0400";
+    };
+
+    secrets.gh_hosts = {
+      key = "gh_hosts";
       mode = "0400";
     };
   };
@@ -198,6 +211,9 @@
     };
   };
 
+  xdg.configFile."gh/hosts.yml".source =
+    config.lib.file.mkOutOfStoreSymlink config.sops.secrets.gh_hosts.path;
+
   home.packages = [
     pkgs.xournalpp
     pkgs.xclip
@@ -226,6 +242,7 @@
     pkgs.taglib
     pkgs.nasm
     pkgs.git-lfs
+    pkgs.gh
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     pkgs.ripgrep
     (pkgs.aspellWithDicts (dicts: [
