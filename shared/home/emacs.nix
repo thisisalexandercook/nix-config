@@ -10,6 +10,7 @@ in
   programs.emacs = {
     enable = true;
     extraPackages = epkgs: [
+      epkgs.jinx
       epkgs.treesit-grammars.with-all-grammars
       epkgs.pdf-tools
     ];

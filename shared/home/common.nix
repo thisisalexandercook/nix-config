@@ -1,5 +1,13 @@
 # ./home.nix
-{ config, pkgs, inputs, ... }: {
+{ config, pkgs, inputs, ... }:
+let
+  aspellPackage = pkgs.aspellWithDicts (dicts: [
+    dicts.en
+    dicts.en-computers
+    dicts.en-science
+  ]);
+in
+{
 
   imports = [
     ./codex.nix
@@ -15,7 +23,14 @@
     EDITOR = "emacs";
     JOL_CLI_JAR = "${pkgs.jol}/share/jol-cli/jol-cli.jar";
     JAVA_HOME = "${pkgs.jdk21}/lib/openjdk";
+    # `libaspell` is loaded through Enchant, so it needs the dictionary path
+    # explicitly instead of relying on the wrapped `aspell` executable.
+    ASPELL_CONF = "dict-dir ${aspellPackage}/lib/aspell";
   };
+
+  home.file.".aspell.conf".text = ''
+    dict-dir ${aspellPackage}/lib/aspell
+  '';
 
   programs.bash = {
     enable = true;
@@ -250,11 +265,7 @@
     pkgs.gh
     inputs.codex-cli-nix.packages.${pkgs.system}.default
     pkgs.ripgrep
-    (pkgs.aspellWithDicts (dicts: [
-      dicts.en
-      dicts.en-computers
-      dicts.en-science
-    ]))
+    aspellPackage
   ];
 
   # dconf settings (GNOME only)

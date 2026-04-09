@@ -109,6 +109,16 @@
   ("C-s" . consult-line)
   ("C-c i" . consult-imenu))
 
+;; jinx
+(use-package jinx
+  :ensure nil
+  :init
+  (setq-default jinx-languages "en_CA")
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages))
+  :config
+  (global-jinx-mode 1))
+
 ;; embark
 (use-package embark
   :ensure t
@@ -197,7 +207,7 @@
   :init
   (setq emms-directory (expand-file-name "emms/" user-emacs-directory)
         emms-playlist-buffer-name "*Music*"
-        emms-source-file-default-directory (expand-file-name "Music/" (getenv "HOME")))
+        emms-source-file-default-directory (expand-file-name "~/codex/music"))
   :config
   (require 'emms-setup)
   (require 'emms-player-mpv)
