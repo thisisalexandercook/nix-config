@@ -2,22 +2,6 @@
 (require 'biblio-dblp)
 (require 'subr-x)
 
-
-(defun biblio-dblp--url (query)
-  "Create a DBLP url to look up QUERY."
-  (format "https://dblp.uni-trier.de/search/publ/api?q=%s&format=xml" (url-encode-url query)))
-
-(defun biblio-dblp--forward-bibtex (metadata forward-to)
-  "Forward BibTeX for DBLP entry METADATA to FORWARD-TO, forcing Trier mirror."
-  (let* ((source-url (biblio-alist-get 'url metadata))
-         (url (replace-regexp-in-string
-               "https?://dblp.org" "https://dblp.uni-trier.de"
-               (replace-regexp-in-string "/rec/" "/rec/bib2/" source-url t t))))
-    (biblio-url-retrieve url (biblio-generic-url-callback
-                              `(lambda ()
-                                 (funcall ,forward-to
-                                          (biblio-response-as-utf-8)))))))
-
 (defvar my/biblio-current-file nil
   "Variable to pass current file context to the cleanup function.")
 

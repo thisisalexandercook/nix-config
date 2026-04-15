@@ -314,8 +314,15 @@
 ;; activities
 (use-package activities
   :ensure t
+  :preface
+  (defun my/switch-to-buffer-with-activity-fallback ()
+    "Use `activities-switch-buffer' in an activity, else `switch-to-buffer'."
+    (interactive)
+    (if (activities-current)
+        (call-interactively #'activities-switch-buffer)
+      (call-interactively #'switch-to-buffer)))
   :bind
-  (([remap switch-to-buffer] . activities-switch-buffer)
+  (([remap switch-to-buffer] . my/switch-to-buffer-with-activity-fallback)
    ("C-x C-a C-n" . activities-new)
    ("C-x C-a C-d" . activities-define)
    ("C-x C-a C-a" . activities-resume)
@@ -538,6 +545,8 @@
   :custom
   (citar-bibliography '("~/codex/papers/main.bib"))
   (citar-library-paths '("~/codex/papers/"))
+  (citar-notes-paths '("~/codex/papers/notes/"))
+  (citar-file-note-extensions '("org"))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup)

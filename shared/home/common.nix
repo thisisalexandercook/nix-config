@@ -240,6 +240,7 @@ in
     pkgs.mpv
     pkgs.yt-dlp
     pkgs.qbittorrent
+    pkgs.nicotine-plus
     pkgs.python3
     pkgs.rclone
     pkgs.syncthing
