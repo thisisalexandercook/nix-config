@@ -314,7 +314,7 @@
 (use-package markdown-mode
   :ensure t
   :mode ("\\.md\\'" . gfm-mode))
-;;
+
 ;; envrc
 (use-package envrc
   :hook (after-init . envrc-global-mode))
@@ -356,7 +356,7 @@
           (python-mode . python-ts-mode)
           (sh-mode     . bash-ts-mode))))
 
-;; Java
+;; java
 (add-to-list 'auto-mode-alist '("\\.java\\'" . java-mode))
 
 ;; dumb-jump
@@ -552,16 +552,6 @@
         (agent-shell-openai-make-authentication :login t))
   (setq agent-shell-openai-codex-environment
         (agent-shell-make-environment-variables :inherit-env t)))
-
-;; project-gemini
-(require 'gemini-integration)
-(with-eval-after-load 'project
-  (define-key project-prefix-map (kbd "G") #'my/project-gemini))
-
-;; project-vterm
-(require 'project-vterm)
-(with-eval-after-load 'project
-  (define-key project-prefix-map (kbd "v") #'my/project-vterm))
 
 ;; citar
 (use-package citar
