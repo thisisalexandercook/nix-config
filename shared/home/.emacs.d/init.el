@@ -66,7 +66,7 @@
         modus-themes-org-blocks 'gray-background)
   ;; Dark theme: modus-vivendi. Light theme: modus-operandi
   (load-theme 'modus-operandi t))
-;;
+
 ;; fontaine
 (use-package fontaine
   :ensure t
@@ -143,6 +143,14 @@
 ;; magit
 (use-package magit
   :ensure t)
+
+;; git-modes
+(use-package git-modes
+  :ensure t
+  :mode (("/\\.gitignore\\'" . gitignore-mode)
+         ("/\\.gitconfig\\'" . gitconfig-mode)
+         ("/\\.gitmodules\\'" . gitconfig-mode)
+         ("/\\.gitattributes\\'" . gitattributes-mode)))
 
 ;; eat
 (use-package eat
@@ -354,13 +362,12 @@
 ;; dumb-jump
 (use-package dumb-jump
   :ensure t
-  :init
-  (require 'java-dumb-jump)
-  (my/java-dumb-jump-setup)
   :custom
   (dumb-jump-prefer-searcher 'rg)
   (dumb-jump-extra-search-paths-function #'my/java-dumb-jump-extra-search-paths)
   :config
+  (require 'java-dumb-jump)
+  (my/java-dumb-jump-setup)
   (setq xref-show-definitions-function #'consult-xref)
   (setq xref-show-xrefs-function #'consult-xref)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate -90))
