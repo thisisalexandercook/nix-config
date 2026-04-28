@@ -348,6 +348,23 @@
           (python-mode . python-ts-mode)
           (sh-mode     . bash-ts-mode))))
 
+;; Java
+(add-to-list 'auto-mode-alist '("\\.java\\'" . java-mode))
+
+;; dumb-jump
+(use-package dumb-jump
+  :ensure t
+  :init
+  (require 'java-dumb-jump)
+  (my/java-dumb-jump-setup)
+  :custom
+  (dumb-jump-prefer-searcher 'rg)
+  (dumb-jump-extra-search-paths-function #'my/java-dumb-jump-extra-search-paths)
+  :config
+  (setq xref-show-definitions-function #'consult-xref)
+  (setq xref-show-xrefs-function #'consult-xref)
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate -90))
+
 ;; yaml-ts-mode
 (use-package yaml-ts-mode
   :ensure nil

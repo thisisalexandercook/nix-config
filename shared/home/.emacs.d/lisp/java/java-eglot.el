@@ -15,6 +15,11 @@
   "Local Java tooling customizations."
   :group 'tools)
 
+(defcustom my/java-eglot-auto-start nil
+  "When non-nil, start Eglot automatically for eligible Java source files."
+  :type 'boolean
+  :group 'my/java)
+
 (defcustom my/java-eglot-gradle-init-script
   (expand-file-name "eglot/extra-jars.init.gradle" user-emacs-directory)
   "Path to the Gradle init script used by JDT LS imports."
@@ -176,6 +181,33 @@
              (my/java-lsp-eligible-file-p buffer-file-name))
     (eglot-ensure)))
 
+(defun my/java-eglot--set-auto-start-hooks (enable)
+  "Add or remove Java Eglot auto-start hooks according to ENABLE."
+  (let ((hook-fn (if enable #'add-hook #'remove-hook)))
+    (funcall hook-fn 'java-mode-hook #'my/java-eglot-maybe-enable)
+    (funcall hook-fn 'java-ts-mode-hook #'my/java-eglot-maybe-enable)))
+
+(defun my/java-eglot-enable-auto-start ()
+  "Enable automatic Eglot startup for eligible Java source files."
+  (interactive)
+  (setq my/java-eglot-auto-start t)
+  (my/java-eglot--set-auto-start-hooks t)
+  (message "Java Eglot auto-start enabled"))
+
+(defun my/java-eglot-disable-auto-start ()
+  "Disable automatic Eglot startup for Java source files."
+  (interactive)
+  (setq my/java-eglot-auto-start nil)
+  (my/java-eglot--set-auto-start-hooks nil)
+  (message "Java Eglot auto-start disabled"))
+
+(defun my/java-eglot-start ()
+  "Start Eglot in the current Java buffer."
+  (interactive)
+  (unless (derived-mode-p 'java-mode 'java-ts-mode)
+    (user-error "Current buffer is not a Java buffer"))
+  (eglot-ensure))
+
 (defun my/eglot-java--find-server ()
   "Find a running Java Eglot server for the current project."
   (when-let* ((project (project-current))
@@ -246,8 +278,7 @@
   (setq eglot-report-progress nil)
   (setq eglot-connect-timeout 120)
   (add-to-list 'eglot-ignored-server-capabilities :workspace/didChangeWorkspaceFolders)
-  (add-hook 'java-mode-hook #'my/java-eglot-maybe-enable)
-  (add-hook 'java-ts-mode-hook #'my/java-eglot-maybe-enable)
+  (my/java-eglot--set-auto-start-hooks my/java-eglot-auto-start)
   (add-to-list 'eglot-server-programs
                '((java-mode java-ts-mode) . my/eglot-jdtls-contact))
   (add-to-list 'file-name-handler-alist '("\\`jdt://" . my/eglot-jdt-uri-handler))
