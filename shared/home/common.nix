@@ -12,7 +12,6 @@ in
   imports = [
     ./codex.nix
     ./emacs.nix
-    ./gemini.nix
   ];
 
   fonts.fontconfig.enable = true;
@@ -23,8 +22,6 @@ in
     EDITOR = "emacs";
     JOL_CLI_JAR = "${pkgs.jol}/share/jol-cli/jol-cli.jar";
     JAVA_HOME = "${pkgs.jdk21}/lib/openjdk";
-    # `libaspell` is loaded through Enchant, so it needs the dictionary path
-    # explicitly instead of relying on the wrapped `aspell` executable.
     ASPELL_CONF = "dict-dir ${aspellPackage}/lib/aspell";
   };
 
@@ -85,11 +82,6 @@ in
       mode = "0400";
     };
 
-    secrets.syncthing_password = {
-      key = "syncthing_password";
-      mode = "0400";
-    };
-
     secrets.gitlab_key = {
       key = "gitlab_key";
       mode = "0400";
@@ -140,41 +132,6 @@ in
               dir-cache-time = "10m";
             };
           };
-        };
-      };
-    };
-  };
-
-  services.syncthing = {
-    enable = true;
-
-    guiAddress = "127.0.0.1:8384";
-    passwordFile = config.sops.secrets.syncthing_password.path;
-
-    settings = {
-      gui = {
-        user = "alex";
-      };
-
-      folders = {
-        "notes" = {
-          path = "${config.home.homeDirectory}/notes";
-          id = "notes-folder-id";
-          devices = [ "bits" "bytes" ];
-        };
-        "scratch" = {
-          path = "${config.home.homeDirectory}/scratch";
-          id = "scratch-folder-id";
-          devices = [ "bits" "bytes"];
-        };
-      };
-
-      devices = {
-        "bits" = {
-          id = "TVRTKW2-CBPGPV5-4EPO7NC-FCJNX75-6MVXVFE-LIMCX2C-RL45VIY-POMQHQT";
-        };
-        "bytes" = {
-          id = "LP6IK6T-DVBDKZC-EIZN5SK-STYG7LU-NCDA3I6-APUUPWD-YAQAGID-2N7GFQ6";
         };
       };
     };
@@ -243,7 +200,6 @@ in
     pkgs.nicotine-plus
     pkgs.python3
     pkgs.rclone
-    pkgs.syncthing
     pkgs.unzip
     pkgs.direnv
     pkgs.nix-direnv
